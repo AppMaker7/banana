@@ -84,3 +84,32 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .health-tool-row b{margin-left:auto;color:#93A1AA;font-weight:400}
 .health-tool-row:hover strong{color:var(--yellow)}
 @media(max-width:650px){.workout-dashboard{gap:12px}.health-welcome{padding:22px 19px}.health-mark{width:52px;height:52px;border-radius:16px;font-size:27px}.health-intro{max-width:250px;font-size:10px;line-height:1.5}.health-stats{gap:8px}.health-stat{min-height:105px;padding:13px 11px}.health-stat>span{font-size:7px;line-height:1.4}.health-stat>strong{font-size:24px}.health-stat .last-session{font-size:17px}.health-stat p{font-size:8px;line-height:1.4}.health-section-title h2{font-size:18px}.today-workout-card{padding:16px}.today-workout-meta strong{font-size:19px}.workout-details{gap:20px}.workout-details strong{font-size:10px}.health-lower-grid{grid-template-columns:1fr;gap:10px}.health-panel{padding:16px}.week-day i{width:27px;height:27px}}
+
+
+/* Muscle ranking and exercise rep logger */
+.muscle-ranking-section{display:grid;gap:12px}
+.muscle-helper{margin:0;color:#82919C;font-size:10px;line-height:1.6}
+.muscle-ranking-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:13px;align-items:start}
+.muscle-list,.muscle-exercise-panel{padding:13px;border:1px solid #20303A;border-radius:14px;background:#0F1922}
+.muscle-list{display:grid;gap:5px}
+.muscle-rank-row{display:flex;align-items:center;gap:10px;width:100%;padding:11px 9px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--text);text-align:left}
+.muscle-rank-row.selected{border-color:#FFE44D44;background:#FFE44D0C}
+.muscle-rank-number{width:25px;color:#8A99A4;font-size:10px}
+.muscle-rank-name{flex:1;font-size:11px;font-weight:600}
+.muscle-rank-row>strong{font-size:10px;white-space:nowrap}
+.muscle-rank-row>strong small{color:#81909B;font-size:8px;font-weight:400}
+.muscle-chevron{color:#82919C;font-size:18px}
+.muscle-exercise-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.muscle-exercise-heading .eyebrow{margin-bottom:5px;font-size:8px}
+.muscle-exercise-heading h3{margin:0;font:600 20px "Space Grotesk",sans-serif}
+.muscle-exercise-heading>strong{color:var(--yellow);font-size:12px;white-space:nowrap}
+.muscle-exercise-heading>strong small{color:#82919B;font-size:8px;font-weight:400}
+.muscle-exercise-panel>.muscle-helper{margin:8px 0 12px}
+.muscle-exercise-row{display:flex;align-items:center;gap:7px;padding:10px 0;border-top:1px solid #1F2D36}
+.muscle-exercise-info{display:grid;gap:4px;flex:1;min-width:0}
+.muscle-exercise-info strong{font-size:10px}
+.muscle-exercise-info small{font-size:8px;color:#82919C}
+.muscle-exercise-row input{width:62px;min-width:0;padding:8px 6px;border:1px solid #34434D;border-radius:7px;background:#09131B;color:#F1F4ED;font:inherit;font-size:10px}
+.muscle-exercise-row button{padding:8px 10px;border:0;border-radius:7px;background:var(--yellow);color:#172027;font-size:9px;font-weight:700}
+.muscle-exercise-row button:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:650px){.muscle-ranking-layout{grid-template-columns:1fr}.muscle-list{gap:3px;padding:9px}.muscle-rank-row{padding:10px 8px}.muscle-exercise-panel{padding:14px}.muscle-exercise-row input{width:66px}}

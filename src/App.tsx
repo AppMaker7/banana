@@ -22,6 +22,28 @@ function App() {
   const [active, setActive] = useState<Tab>("Home");
   const [playing, setPlaying] = useState(false);
   const [focusEnabled, setFocusEnabled] = useState(false);\n  const [workoutPreview, setWorkoutPreview] = useState(false);
+  const [selectedMuscle, setSelectedMuscle] = useState("Chest");
+  const [repInputs, setRepInputs] = useState<Record<string, string>>({});
+  const [repTotals, setRepTotals] = useState<Record<string, number>>({});
+  const muscleData = [
+    { name: "Chest", exercises: ["Push-ups", "Dumbbell floor press", "Incline push-ups"] },
+    { name: "Back", exercises: ["One-arm dumbbell rows", "Superman raises", "Reverse snow angels"] },
+    { name: "Shoulders", exercises: ["Dumbbell shoulder press", "Pike push-ups", "Arm circles"] },
+    { name: "Biceps", exercises: ["Dumbbell curls", "Hammer curls"] },
+    { name: "Triceps", exercises: ["Close-grip push-ups", "Overhead dumbbell extensions"] },
+    { name: "Core", exercises: ["Crunches", "Dead bugs", "Bicycle crunches"] },
+    { name: "Legs", exercises: ["Bodyweight squats", "Reverse lunges", "Calf raises"] },
+  ];
+  const selectedGroup = muscleData.find((group) => group.name === selectedMuscle) ?? muscleData[0];
+  const muscleTotal = (name: string) => selectedGroupFor(name).exercises.reduce((sum, exercise) => sum + (repTotals[name + ":" + exercise] ?? 0), 0);
+  const selectedGroupFor = (name: string) => muscleData.find((group) => group.name === name) ?? muscleData[0];
+  const logExerciseReps = (muscle: string, exercise: string) => {
+    const key = muscle + ":" + exercise;
+    const amount = Math.max(0, Math.floor(Number(repInputs[key] ?? "0")));
+    if (!amount) return;
+    setRepTotals((current) => ({ ...current, [key]: (current[key] ?? 0) + amount }));
+    setRepInputs((current) => ({ ...current, [key]: "" }));
+  };
 
   const title = active === "Home" ? "Your day, in balance." : active === "Health" ? "Move with intention." : active === "Focus" ? "Take back your time." : "Make it yours.";
 
@@ -132,6 +154,41 @@ function App() {
                 <button className="start-workout-button" onClick={() => setWorkoutPreview(!workoutPreview)}>{workoutPreview ? "Workout preview opened" : "View workout"} <span>→</span></button>
                 {workoutPreview && <p className="workout-preview-note">Your workout preview is ready. Exercise tracking and saved sessions are coming next.</p>}
               </article>
+
+              <section className="muscle-ranking-section">
+                <div className="health-section-title">
+                  <div><p className="eyebrow">YOUR BODYGRAPH</p><h2>Muscle rankings</h2></div>
+                  <span className="workout-tag">BY TOTAL REPS</span>
+                </div>
+                <p className="muscle-helper">Tap a muscle group to see its exercises and log your reps. Rankings update automatically.</p>
+                <div className="muscle-ranking-layout">
+                  <div className="muscle-list">
+                    {muscleData.map((group) => (
+                      <button key={group.name} className={selectedMuscle === group.name ? "muscle-rank-row selected" : "muscle-rank-row"} onClick={() => setSelectedMuscle(group.name)}>
+                        <span className="muscle-rank-number">#{[...muscleData].sort((x,y) => muscleTotal(y.name)-muscleTotal(x.name)).findIndex((item) => item.name === group.name) + 1}</span>
+                        <span className="muscle-rank-name">{group.name}</span>
+                        <strong>{muscleTotal(group.name).toLocaleString()} <small>reps</small></strong>
+                        <span className="muscle-chevron">›</span>
+                      </button>
+                    ))}
+                  </div>
+                  <article className="muscle-exercise-panel">
+                    <div className="muscle-exercise-heading">
+                      <div><p className="eyebrow">SELECTED MUSCLE</p><h3>{selectedMuscle}</h3></div>
+                      <strong>{muscleTotal(selectedMuscle).toLocaleString()} <small>total reps</small></strong>
+                    </div>
+                    <p className="muscle-helper">Exercises for {selectedMuscle.toLowerCase()}</p>
+                    {selectedGroup.exercises.map((exercise) => {
+                      const key = selectedMuscle + ":" + exercise;
+                      return <div className="muscle-exercise-row" key={key}>
+                        <div className="muscle-exercise-info"><strong>{exercise}</strong><small>{(repTotals[key] ?? 0).toLocaleString()} reps logged</small></div>
+                        <input aria-label={"Reps for " + exercise} type="number" min="1" inputMode="numeric" placeholder="Reps" value={repInputs[key] ?? ""} onChange={(event) => setRepInputs((current) => ({...current, [key]: event.target.value}))} />
+                        <button onClick={() => logExerciseReps(selectedMuscle, exercise)} disabled={!Number(repInputs[key] ?? "0")}>Add</button>
+                      </div>;
+                    })}
+                  </article>
+                </div>
+              </section>
 
               <div className="health-lower-grid">
                 <article className="health-panel">

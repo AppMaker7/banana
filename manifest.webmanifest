@@ -1,0 +1,19 @@
+{
+  "name": "BANANA",
+  "short_name": "BANANA",
+  "description": "Your personal life, in focus.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050B12",
+  "theme_color": "#050B12",
+  "icons": [
+    {
+      "src": "/banana.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

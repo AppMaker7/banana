@@ -21,7 +21,7 @@ const navItems: { name: Tab; icon: string }[] = [
 function App() {
   const [active, setActive] = useState<Tab>("Home");
   const [playing, setPlaying] = useState(false);
-  const [focusEnabled, setFocusEnabled] = useState(false);
+  const [focusEnabled, setFocusEnabled] = useState(false);\n  const [workoutPreview, setWorkoutPreview] = useState(false);
 
   const title = active === "Home" ? "Your day, in balance." : active === "Health" ? "Move with intention." : active === "Focus" ? "Take back your time." : "Make it yours.";
 
@@ -95,12 +95,65 @@ function App() {
                 </article>
               </section>
             </>
+          ) : active === "Health" ? (
+            <section className="workout-dashboard">
+              <div className="health-welcome">
+                <div>
+                  <p className="eyebrow">YOUR TRAINING SPACE</p>
+                  <h2>Build strength.<br /><span>Stay consistent.</span></h2>
+                  <p className="health-intro">Your workouts, progress, and recovery — all in one place.</p>
+                </div>
+                <div className="health-mark">✳</div>
+              </div>
+
+              <div className="health-stats">
+                <article className="health-stat"><span>WORKOUTS THIS WEEK</span><strong>0 <small>/ 3</small></strong><div className="health-progress"><i style={{width:"0%"}} /></div></article>
+                <article className="health-stat"><span>TIME TRAINED</span><strong>0<small> min</small></strong><p>Start a session to track time</p></article>
+                <article className="health-stat"><span>LAST SESSION</span><strong className="last-session">Not yet</strong><p>Your history starts here</p></article>
+              </div>
+
+              <div className="health-section-title">
+                <div><p className="eyebrow">PICK UP WHERE YOU LEFT OFF</p><h2>Today's workout</h2></div>
+                <span className="workout-tag">STRENGTH</span>
+              </div>
+
+              <article className="today-workout-card">
+                <div className="today-workout-top">
+                  <div className="workout-icon-large">✳</div>
+                  <div className="today-workout-meta"><span>YOUR PLAN</span><strong>Chest + Back</strong><small>Upper body · Personal routine</small></div>
+                  <span className="workout-arrow">↗</span>
+                </div>
+                <div className="workout-divider" />
+                <div className="workout-details">
+                  <div><strong>3</strong><span>movements</span></div>
+                  <div><strong>Bodyweight +</strong><span>light dumbbells</span></div>
+                  <div><strong>Flexible</strong><span>take your time</span></div>
+                </div>
+                <button className="start-workout-button" onClick={() => setWorkoutPreview(!workoutPreview)}>{workoutPreview ? "Workout preview opened" : "View workout"} <span>→</span></button>
+                {workoutPreview && <p className="workout-preview-note">Your workout preview is ready. Exercise tracking and saved sessions are coming next.</p>}
+              </article>
+
+              <div className="health-lower-grid">
+                <article className="health-panel">
+                  <div className="health-panel-heading"><div><p className="eyebrow">THIS WEEK</p><h3>Activity</h3></div><span>WEEKLY</span></div>
+                  <div className="week-days">
+                    {["M","T","W","T","F","S","S"].map((day, index) => <div className="week-day" key={index}><span>{day}</span><i /></div>)}
+                  </div>
+                  <p className="empty-activity">Your completed workouts will show up here.</p>
+                </article>
+                <article className="health-panel">
+                  <div className="health-panel-heading"><div><p className="eyebrow">QUICK ACCESS</p><h3>Your tools</h3></div></div>
+                  <button className="health-tool-row" onClick={() => setWorkoutPreview(true)}><span className="health-tool-icon">▤</span><span><strong>Workout plan</strong><small>See today's routine</small></span><b>→</b></button>
+                  <button className="health-tool-row" onClick={() => setWorkoutPreview(true)}><span className="health-tool-icon cyan-tool">◷</span><span><strong>Workout history</strong><small>Sessions will appear here</small></span><b>→</b></button>
+                </article>
+              </div>
+            </section>
           ) : (
             <section className="placeholder-panel">
-              <div className="placeholder-symbol">{active === "Health" ? "✳" : active === "Focus" ? "◷" : "⚙"}</div>
+              <div className="placeholder-symbol">{active === "Focus" ? "◷" : "⚙"}</div>
               <p className="eyebrow">{active.toUpperCase()} MODULE</p>
-              <h2>{active === "Health" ? "Your training space is next." : active === "Focus" ? "Make focus work for you." : "Your setup, your rules."}</h2>
-              <p>{active === "Health" ? "Workout planning, exercise tracking, recovery, and an in-workout music player will live here." : active === "Focus" ? "Choose apps, complete a movement challenge, and earn a timed unlock. Essential apps always stay available." : "Themes, sounds, notifications, and personal preferences will be managed here."}</p>
+              <h2>{active === "Focus" ? "Make focus work for you." : "Your setup, your rules."}</h2>
+              <p>{active === "Focus" ? "Choose apps, complete a movement challenge, and earn a timed unlock. Essential apps always stay available." : "Themes, sounds, notifications, and personal preferences will be managed here."}</p>
               {active === "Focus" && <button className={focusEnabled ? "card-button cyan-button" : "card-button yellow-button"} onClick={() => setFocusEnabled(!focusEnabled)}>{focusEnabled ? "Focus preview enabled" : "Preview Focus Mode"} <span>→</span></button>}
               <button className="back-link" onClick={() => setActive("Home")}>← Back to dashboard</button>
             </section>

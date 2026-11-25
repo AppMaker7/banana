@@ -21,7 +21,8 @@ const navItems: { name: Tab; icon: string }[] = [
 function App() {
   const [active, setActive] = useState<Tab>("Home");
   const [playing, setPlaying] = useState(false);
-  const [focusEnabled, setFocusEnabled] = useState(false);\n  const [workoutPreview, setWorkoutPreview] = useState(false);
+  const [focusEnabled, setFocusEnabled] = useState(false);
+  const [workoutPreview, setWorkoutPreview] = useState(false);
   const [selectedMuscle, setSelectedMuscle] = useState("Chest");
   const [repInputs, setRepInputs] = useState<Record<string, string>>({});
   const [repTotals, setRepTotals] = useState<Record<string, number>>(() => {

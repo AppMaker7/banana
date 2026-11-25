@@ -47,8 +47,6 @@ function App() {
       <main className="main-area">
         <header className="topbar">
           <div className="mobile-brand"><span className="brand-mark"><BananaMark /></span><strong>BANANA</strong></div>
-          <div className="breadcrumb"><span>Workspace</span><b>/</b><strong>{active}</strong></div>
-          <div className="top-actions"><span className="today-label">WED, NOV 25</span><button className="icon-button" aria-label="Notifications">♧<i /></button><div className="avatar small">B</div></div>
         </header>
 
         <div className="content">

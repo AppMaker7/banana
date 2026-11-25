@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Tab = "Home" | "Health" | "Focus" | "Settings";
 
@@ -24,7 +24,29 @@ function App() {
   const [focusEnabled, setFocusEnabled] = useState(false);\n  const [workoutPreview, setWorkoutPreview] = useState(false);
   const [selectedMuscle, setSelectedMuscle] = useState("Chest");
   const [repInputs, setRepInputs] = useState<Record<string, string>>({});
-  const [repTotals, setRepTotals] = useState<Record<string, number>>({});
+  const [repTotals, setRepTotals] = useState<Record<string, number>>(() => {
+    try {
+      const saved = window.localStorage.getItem("banana-muscle-rep-totals-v1");
+      if (!saved) return {};
+      const parsed = JSON.parse(saved) as Record<string, number>;
+      return Object.fromEntries(
+        Object.entries(parsed).filter(([key, value]) =>
+          typeof key === "string" && typeof value === "number" &&
+          Number.isFinite(value) && value >= 0
+        )
+      );
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("banana-muscle-rep-totals-v1", JSON.stringify(repTotals));
+    } catch {
+      // Keep the workout usable if browser storage is unavailable or full.
+    }
+  }, [repTotals]);
   const muscleData = [
     { name: "Chest", exercises: ["Push-ups", "Dumbbell floor press", "Incline push-ups"] },
     { name: "Back", exercises: ["One-arm dumbbell rows", "Superman raises", "Reverse snow angels"] },

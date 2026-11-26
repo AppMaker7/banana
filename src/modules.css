@@ -120,3 +120,6 @@
 .mobile-nav{grid-template-columns:repeat(6,minmax(0,1fr))}
 .mobile-nav-item{min-width:0}
 .mobile-nav-item small{font-size:8px}
+
+.break-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.break-controls button{padding:8px 10px}

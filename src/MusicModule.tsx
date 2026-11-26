@@ -15,6 +15,9 @@ export default function MusicModule() {
   const [trackTitle, setTrackTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [trackUrl, setTrackUrl] = useState("");
+  const [spotifyUrl, setSpotifyUrl] = useState("");
+  const [spotifyEmbedUrl, setSpotifyEmbedUrl] = useState("");
+  const [spotifyType, setSpotifyType] = useState("track");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -111,6 +114,37 @@ export default function MusicModule() {
     } finally { setBusy(false); }
   }
 
+  function loadSpotifyEmbed(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const value = spotifyUrl.trim();
+    const uriMatch = value.match(/^spotify:(track|album|playlist|artist|show|episode):([A-Za-z0-9]+)$/i);
+    let type = "";
+    let id = "";
+    if (uriMatch) {
+      type = uriMatch[1].toLowerCase();
+      id = uriMatch[2];
+    } else {
+      try {
+        const parsed = new URL(value);
+        if (parsed.hostname !== "open.spotify.com") throw new Error("Use a Spotify share link from open.spotify.com.");
+        const parts = parsed.pathname.split("/").filter(Boolean);
+        const offset = parts[0] === "embed" ? 1 : 0;
+        type = parts[offset] ?? "";
+        id = parts[offset + 1] ?? "";
+        if (!["track", "album", "playlist", "artist", "show", "episode"].includes(type) || !/^[A-Za-z0-9]+$/.test(id)) {
+          throw new Error("Paste a Spotify track, album, artist, show, or playlist link.");
+        }
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : "That Spotify link isn't valid.");
+        return;
+      }
+    }
+    setSpotifyType(type);
+    setSpotifyEmbedUrl("https://open.spotify.com/embed/" + type + "/" + id + "?utm_source=generator&theme=0");
+    setError("");
+    setMessage("Spotify player loaded. Playback is handled by Spotify.");
+  }
+
   async function removeTrack(track: Track) {
     if (!supabase) return;
     setError(""); setMessage("");
@@ -162,6 +196,18 @@ export default function MusicModule() {
           <p className="module-footnote">A Spotify page link isn't a direct audio file. Spotify playback needs a separate supported integration.</p>
         </article>
       </div>
+      <article className="module-card spotify-v3-card">
+        <div className="module-card-head"><div><p className="eyebrow">STREAM WITHOUT UPLOADING</p><h3>Spotify player</h3><p>Paste a Spotify share link and play it right here.</p></div><span>SPOTIFY</span></div>
+        <form className="spotify-v3-form" onSubmit={loadSpotifyEmbed}>
+          <input className="module-input" type="url" value={spotifyUrl} onChange={(event) => setSpotifyUrl(event.target.value)} placeholder="https://open.spotify.com/track/…" aria-label="Spotify share link" required />
+          <button className="module-primary" type="submit">Load player</button>
+        </form>
+        {spotifyEmbedUrl ? <div className="spotify-v3-player">
+          <iframe title={"Spotify " + spotifyType + " player"} src={spotifyEmbedUrl} width="100%" height={spotifyType === "track" || spotifyType === "episode" ? 152 : 352} frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
+          <a href={spotifyUrl} target="_blank" rel="noreferrer">Open in Spotify ↗</a>
+        </div> : <div className="spotify-v3-empty"><span>♫</span><p>Your Spotify player will appear here. No audio file upload needed.</p></div>}
+        <p className="module-footnote">Spotify controls playback inside its embedded player. Availability and full playback depend on Spotify's account, track, and device rules.</p>
+      </article>
       <article className="module-card music-player-card">
         <div className="music-player-top"><div className="music-art">♫</div><div><p className="eyebrow">NOW PLAYING</p><h3>{currentTrack?.title ?? "Choose a track"}</h3><p>{currentTrack?.artist ?? (currentTrack ? "BANANA playlist" : "Your soundtrack will appear here.")}</p></div><span className="module-pill">PERSISTENT PLAYER</span></div>
         <div className="music-player-actions">

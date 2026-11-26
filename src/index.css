@@ -198,3 +198,20 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 }
 
 .topbar{display:flex;align-items:center;justify-content:flex-end}.topbar-date{color:#71818C;font-size:9px;letter-spacing:.1em;text-transform:uppercase}:root[data-theme="light"] .topbar-date{color:#52616D}
+
+
+/* Theme tokens and motion preference */
+:root[data-theme="banana"]{--bg:#100E05;--panel:#1D1A0D;--panel2:#26200A;--yellow:#FFD43B;--cyan:#F4C84B;--line:#3A3218}
+:root[data-theme="ocean"]{--bg:#06131D;--panel:#0C2230;--panel2:#102D3D;--yellow:#5CE1E6;--cyan:#6CB8FF;--line:#1B3A4A}
+:root[data-theme="light"]{--bg:#F1F4F6;--panel:#FFFFFF;--panel2:#E8EDF1;--yellow:#A66B00;--cyan:#087C99;--line:#D5DEE4;--text:#17232C;--muted:#52616C}
+:root[data-theme="light"] body,:root[data-theme="light"] .app-shell{background:var(--bg);color:var(--text)}
+:root[data-theme="light"] .sidebar,:root[data-theme="light"] .topbar{background:#F8FAFB;border-color:var(--line)}
+:root[data-theme="light"] .brand,:root[data-theme="light"] .nav-item.active,:root[data-theme="light"] .profile-mini strong,:root[data-theme="light"] .greeting-row h1{color:#17232C}
+:root[data-theme="light"] .nav-item{color:#52616C}
+:root[data-theme="light"] .nav-item.active{background:#E6EDF1;border-color:#CBD6DE}
+:root[data-theme="light"] .stat-card,:root[data-theme="light"] .feature-card,:root[data-theme="light"] .module-card,:root[data-theme="light"] .more-stat{background:#FFFFFF;border-color:#D5DEE4;color:#17232C}
+:root[data-theme="light"] .stat-value,:root[data-theme="light"] .module-card-head h3,:root[data-theme="light"] .module-heading h2,:root[data-theme="light"] .more-stat strong{color:#17232C}
+:root[data-theme="light"] .module-input{background:#F7F9FA;color:#17232C;border-color:#CBD6DE}
+:root[data-theme="light"] .more-movement,:root[data-theme="light"] .more-achievement,:root[data-theme="light"] .more-tabs{background:#F7F9FA;border-color:#D5DEE4}
+:root[data-theme="light"] .more-journal-entry p,:root[data-theme="light"] .more-movement p{color:#52616C}
+:root.reduce-motion *,:root.reduce-motion *::before,:root.reduce-motion *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}

@@ -22,8 +22,7 @@ export default function BodyDiagram({ selectedMuscle, onSelect }: Props) {
 
   return (
     <div className="body-diagram-wrap bodygraph-pro">
-      <div className="body-diagram-legend"><span><i /> FRONT ANATOMY</span><span><i /> BACK ANATOMY</span></div>
-      <svg className="body-diagram body-diagram-pro" viewBox="0 0 680 430" role="group" aria-label="Detailed interactive front and back muscle anatomy diagram">
+      <svg className="body-diagram body-diagram-pro" viewBox="-34 0 748 590" role="group" aria-label="Detailed interactive front and back muscle anatomy diagram">
         <defs>
           <linearGradient id="anatomySkin" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#F0F1FF" /><stop offset=".55" stopColor="#C9CBE0" /><stop offset="1" stopColor="#AEB4D0" />
@@ -35,6 +34,7 @@ export default function BodyDiagram({ selectedMuscle, onSelect }: Props) {
             <feGaussianBlur stdDeviation="5" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
+        <g transform="translate(-34 0) scale(1.1 1.42)">
         <g className="anatomy-figure">
           {/* Front silhouette */}
           <g className="body-base">
@@ -98,12 +98,8 @@ export default function BodyDiagram({ selectedMuscle, onSelect }: Props) {
           {zone("Legs", "M442 348 L467 354 L473 369 L442 376 L433 365Z", "back-left-calf")}
           {zone("Legs", "M513 354 L538 348 L545 365 L536 376 L505 369Z", "back-right-calf")}
         </g>
-        <g className="body-view-labels"><text x="162" y="407">FRONT</text><text x="489" y="407">BACK</text></g>
+        </g>
       </svg>
-      <div className="body-diagram-footer"><span>SELECT A MUSCLE GROUP</span><span className="body-diagram-active"><i /> {selectedMuscle.toUpperCase()} SELECTED</span></div>
-      <div className="body-muscle-chips">
-        {groups.map((muscle) => <button key={muscle} type="button" className={selectedMuscle === muscle ? "body-muscle-chip selected" : "body-muscle-chip"} aria-pressed={selectedMuscle === muscle} onClick={() => onSelect(muscle)}>{muscle}</button>)}
-      </div>
     </div>
   );
 }

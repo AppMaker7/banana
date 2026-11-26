@@ -1,5 +1,3 @@
-import React from "react";
-
 type Props = { selectedMuscle: string; onSelect: (muscle: string) => void };
 
 const muscles = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Glutes", "Quads", "Hamstrings", "Calves"];
@@ -11,7 +9,6 @@ function Zone({ name, d, selectedMuscle, onSelect }: ZoneProps) {
 
 function Front({ selectedMuscle, onSelect }: Props) {
   return <svg className="banana-anatomy-figure" viewBox="0 0 220 430" role="group" aria-label="Front muscle map">
-    <defs><linearGradient id="banana-skin-front" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#F0E6C9"/><stop offset=".55" stopColor="#C9B995"/><stop offset="1" stopColor="#8F8065"/></linearGradient></defs>
     <g className="banana-body-base">
       <circle cx="110" cy="35" r="24"/><path d="M91 61 Q79 64 64 73 L47 88 31 145 Q28 157 37 160 Q46 162 50 150 L64 112 67 174 Q68 193 61 214 L53 256 Q51 270 64 276 L70 327 63 398 Q62 410 73 411 Q83 412 86 399 L107 305 113 305 134 399 Q137 412 147 411 Q158 410 157 398 L150 327 156 276 Q169 270 167 256 L159 214 Q152 193 153 174 L156 112 170 150 Q174 162 183 160 Q192 157 189 145 L173 88 156 73 Q141 64 129 61Z"/>
     </g>

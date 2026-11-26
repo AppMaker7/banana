@@ -166,7 +166,7 @@ export default function MusicModule() {
   return (
     <section className="banana-module">
       <div className="module-heading">
-        <div><p className="eyebrow">PHASE 5 · MUSIC</p><h2>Your soundtrack.</h2><p>Build playlists, import audio, and keep playback controls with you as you move around BANANA.</p></div>
+        <div><p className="eyebrow">BANANA MUSIC</p><h2>Your soundtrack.</h2><p>Build playlists, import audio, and keep playback controls with you as you move around BANANA.</p></div>
         <span className="module-pill">PLAYER BETA</span>
       </div>
       {(error || playerError || message) && <p className={error || playerError ? "module-alert error" : "module-alert"} role="status">{error || playerError || message}</p>}

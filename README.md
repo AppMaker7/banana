@@ -31,7 +31,7 @@ npm run dev
 
 ## Project principles
 
-1. Build one milestone at a time.
+1. Ship complete, connected experiences rather than placeholder screens.
 2. Keep secrets out of source control.
-3. Test each feature before expanding.
+3. Test the full app before deployment.
 4. Respect accessibility and reduced-motion preferences.

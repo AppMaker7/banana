@@ -104,7 +104,7 @@ export default function AuthGate({ children }: Props) {
           <div style={{ color: "#FFE44D", fontSize: 12, fontWeight: 800, letterSpacing: ".2em" }}>BANANA</div>
           <h1 style={{ fontSize: 27, marginBottom: 8 }}>Connect your database</h1>
           <p style={{ color: "#9AA8B1", lineHeight: 1.6, fontSize: 13 }}>
-            The account system is ready, but the Supabase project keys still need to be added to the Vercel environment variables.
+            The account system is ready, but the Supabase project keys still need to be added to the Cloudflare Pages environment variables.
           </p>
           <p style={{ color: "#35DDF5", fontSize: 12 }}>Required: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY</p>
         </section>

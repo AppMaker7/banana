@@ -240,12 +240,12 @@ export default function HealthModule() {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!userData.user) throw new Error("Log in again to save recovery.");
-      const { error: saveError } = await supabase.from("recovery_logs").insert({
+      const { error: saveError } = await supabase.from("recovery_logs").upsert({
         user_id: userData.user.id,
         sleep_hours: recoverySleep === "" ? null : Number(recoverySleep),
         energy_level: Number(energy), soreness_level: Number(soreness),
         notes: recoveryNotes.trim() || null,
-      });
+      }, { onConflict: "user_id,logged_on" });
       if (saveError) throw saveError;
       setRecoveryNotes("");
       setMessage("Recovery check-in saved.");

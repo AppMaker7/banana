@@ -196,3 +196,5 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
   .greeting-row{margin-bottom:19px}
   .mobile-nav{padding-top:8px;background:#08121BEF}
 }
+
+.topbar{display:flex;align-items:center;justify-content:flex-end}.topbar-date{color:#71818C;font-size:9px;letter-spacing:.1em;text-transform:uppercase}:root[data-theme="light"] .topbar-date{color:#52616D}

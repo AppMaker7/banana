@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import BodyDiagram from "./BodyDiagram";
 
 const RANKS = [
   { name: "Wood", min: 0 }, { name: "Bronze", min: 10 },
@@ -68,6 +69,10 @@ export default function RankCenter({ muscleBests, exerciseBests, selectedMuscle,
         <article><span>BEST SET REPS</span><strong>{bestExercise?.[1] ?? 0}</strong><small>Highest single-set result</small></article>
       </section>
 
+      <section className="rank-bodygraph-feature">
+        <div className="rank-section-heading"><div><span className="rank-overline">INTERACTIVE ANATOMY</span><h3>Your muscle map</h3></div><span>SELECT A MUSCLE</span></div>
+        <BodyDiagram selectedMuscle={selectedMuscle} onSelect={onSelectMuscle}/>
+      </section>
       <section className="rank-section">
         <div className="rank-section-heading"><div><span className="rank-overline">MUSCLE PROGRESSION</span><h3>Body rankings</h3></div><span>{trackedMuscles} ACTIVE</span></div>
         <div className="rank-muscle-grid">

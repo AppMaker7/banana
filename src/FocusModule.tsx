@@ -140,7 +140,7 @@ export default function FocusModule() {
   return (
     <section className="banana-module">
       <div className="module-heading">
-        <div><p className="eyebrow">PHASE 3 · FOCUS MODE</p><h2>Protect your attention.</h2><p>Set a focus block, take a mindful break, and keep a record of your sessions.</p></div>
+        <div><p className="eyebrow">FOCUS MODE</p><h2>Protect your attention.</h2><p>Set a focus block, take a mindful break, and keep a record of your sessions.</p></div>
         <span className="module-pill">SESSION TRACKER</span>
       </div>
       {(error || message) && <p className={error ? "module-alert error" : "module-alert"} role="status">{error || message}</p>}

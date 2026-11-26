@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import HealthModule from "./HealthModule";
 
-type Tab = "Home" | "Health" | "Focus" | "Settings";
+type Tab = "Home" | "Health" | "Focus" | "AI" | "Music" | "Settings";
 
 function BananaMark() {
   return (
@@ -15,6 +16,8 @@ const navItems: { name: Tab; icon: string }[] = [
   { name: "Home", icon: "⌂" },
   { name: "Health", icon: "✳" },
   { name: "Focus", icon: "◷" },
+  { name: "AI", icon: "✦" },
+  { name: "Music", icon: "♫" },
   { name: "Settings", icon: "⚙" },
 ];
 
@@ -69,7 +72,7 @@ function App() {
     setRepInputs((current) => ({ ...current, [key]: "" }));
   };
 
-  const title = active === "Home" ? "Your day, in balance." : active === "Health" ? "Move with intention." : active === "Focus" ? "Take back your time." : "Make it yours.";
+  const title = active === "Home" ? "Your day, in balance." : active === "Health" ? "Move with intention." : active === "Focus" ? "Take back your time." : active === "AI" ? "Make a plan that works." : active === "Music" ? "Set your soundtrack." : "Make it yours.";
 
   return (
     <div className="app-shell">
@@ -266,6 +269,7 @@ function App() {
                 </article>
               </div>
             </section>
+            <HealthModule />
           ) : (
             <section className="placeholder-panel">
               <div className="placeholder-symbol">{active === "Focus" ? "◷" : "⚙"}</div>

@@ -20,84 +20,92 @@ export default function BodyDiagram({ selectedMuscle, onSelect }: Props) {
 
   return (
     <div className="body-diagram-wrap bodygraph-pro">
-      <svg className="body-diagram body-diagram-pro" viewBox="-34 0 748 590" role="group" aria-label="Detailed interactive front and back muscle anatomy diagram">
+      <svg className="body-diagram body-diagram-pro anatomy-realistic" viewBox="0 0 760 570" role="group" aria-label="Interactive front and back muscular anatomy illustration">
         <defs>
           <linearGradient id="anatomySkin" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#F0F1FF" /><stop offset=".55" stopColor="#C9CBE0" /><stop offset="1" stopColor="#AEB4D0" />
+            <stop offset="0" stopColor="#E9E5D2" /><stop offset=".48" stopColor="#C9C4AE" /><stop offset="1" stopColor="#8D897B" />
           </linearGradient>
-          <linearGradient id="anatomyShade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#D9DBED" /><stop offset="1" stopColor="#AEB4CC" />
+          <linearGradient id="anatomyMuscle" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#D8D2BD" /><stop offset="1" stopColor="#A8A18D" />
           </linearGradient>
-          <filter id="anatomyGlow" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="5" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          <linearGradient id="anatomyShadow" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#777363" /><stop offset=".5" stopColor="#DAD4C0" /><stop offset="1" stopColor="#777363" />
+          </linearGradient>
+          <filter id="anatomyDepth" x="-30%" y="-20%" width="160%" height="150%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur" />
+            <feOffset dy="7" result="offset" />
+            <feComponentTransfer><feFuncA type="linear" slope=".28" /></feComponentTransfer>
+            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
-        <g transform="translate(-34 0) scale(1.1 1.52)">
-        <g className="anatomy-figure">
-          {/* Front silhouette */}
+
+        {/* Front and posterior anatomical plates */}
+        <g className="anatomy-figure" filter="url(#anatomyDepth)">
           <g className="body-base">
-            <path d="M148 19 Q130 20 127 40 L130 65 Q134 80 150 84 L150 99 Q130 103 111 112 Q91 120 82 145 L66 205 Q62 222 73 231 Q83 237 91 221 L112 166 L119 181 L108 238 Q105 258 113 277 L105 346 Q102 369 116 377 L143 377 Q151 373 150 360 L151 294 L163 250 L175 294 L176 360 Q175 373 184 377 L211 377 Q225 369 222 346 L214 277 Q222 258 219 238 L208 181 L215 166 L236 221 Q244 237 254 231 Q265 222 259 205 L243 145 Q234 120 214 112 Q195 103 175 99 L175 84 Q191 80 195 65 L198 40 Q195 20 177 19Z" />
-            <path d="M145 94 Q162 100 180 94 L196 107 L207 139 L199 207 Q193 229 190 247 L180 286 L162 286 L151 247 Q148 229 142 207 L134 139 L124 107Z" />
-            <path d="M138 278 Q151 274 162 286 L158 341 L153 365 Q145 377 124 377 L113 371 Q106 363 110 347 L117 300Z" />
-            <path d="M181 286 Q193 274 206 278 L227 347 Q231 363 224 371 L213 377 Q192 377 184 365 L179 341Z" />
-            <path d="M148 9 Q161 -1 179 8 Q193 17 193 39 L188 67 Q180 83 162 84 Q143 82 135 67 L130 39 Q131 17 148 9Z" />
-            {/* Back silhouette */}
-            <path d="M478 19 Q460 20 457 40 L460 65 Q464 80 480 84 L480 99 Q460 103 441 112 Q421 120 412 145 L396 205 Q392 222 403 231 Q413 237 421 221 L442 166 L449 181 L438 238 Q435 258 443 277 L435 346 Q432 369 446 377 L473 377 Q481 373 480 360 L481 294 L493 250 L505 294 L506 360 Q505 373 514 377 L541 377 Q555 369 552 346 L544 277 Q552 258 549 238 L538 181 L545 166 L566 221 Q574 237 584 231 Q595 222 589 205 L573 145 Q564 120 544 112 Q525 103 505 99 L505 84 Q521 80 525 65 L528 40 Q525 20 507 19Z" />
-            <path d="M475 9 Q488 -1 506 8 Q520 17 520 39 L515 67 Q507 83 489 84 Q470 82 462 67 L457 39 Q458 17 475 9Z" />
+            {/* FRONT: head, neck, torso, arms and legs */}
+            <path d="M145 20 C130 20 119 32 119 50 L121 73 C123 91 136 103 151 106 L151 121 C132 124 111 131 96 143 C83 154 77 173 72 194 L54 263 C51 276 57 286 67 289 C77 292 83 285 87 273 L105 214 L112 207 L104 273 C101 289 103 306 111 319 L105 379 C102 400 109 416 125 420 L145 421 C155 419 160 411 159 397 L160 330 L171 330 L172 397 C171 411 177 419 187 421 L207 420 C223 416 230 400 227 379 L221 319 C229 306 231 289 228 273 L220 207 L227 214 L245 273 C249 285 255 292 265 289 C275 286 281 276 278 263 L260 194 C255 173 249 154 236 143 C221 131 200 124 181 121 L181 106 C196 103 209 91 211 73 L213 50 C213 32 202 20 187 20Z" />
+            <path d="M150 104 C157 111 175 111 182 104 L188 125 C183 134 178 139 166 139 C154 139 149 134 144 125Z" />
+            {/* Front thigh and lower-leg separation */}
+            <path d="M111 316 C127 320 145 325 160 329 L157 397 C155 416 143 426 126 421 C111 416 105 401 108 380Z" />
+            <path d="M172 329 C187 325 205 320 221 316 L224 380 C227 401 221 416 206 421 C189 426 177 416 175 397Z" />
+            <path d="M120 420 C132 425 145 424 156 418 L153 493 C152 508 146 519 136 520 L119 518 C111 514 110 504 112 490Z" />
+            <path d="M178 418 C189 424 202 425 214 420 L222 490 C224 504 223 514 215 518 L198 520 C188 519 182 508 181 493Z" />
+            {/* BACK: matched proportions */}
+            <path d="M525 20 C510 20 499 32 499 50 L501 73 C503 91 516 103 531 106 L531 121 C512 124 491 131 476 143 C463 154 457 173 452 194 L434 263 C431 276 437 286 447 289 C457 292 463 285 467 273 L485 214 L492 207 L484 273 C481 289 483 306 491 319 L485 379 C482 400 489 416 505 420 L525 421 C535 419 540 411 539 397 L540 330 L551 330 L552 397 C551 411 557 419 567 421 L587 420 C603 416 610 400 607 379 L601 319 C609 306 611 289 608 273 L600 207 L607 214 L625 273 C629 285 635 292 645 289 C655 286 661 276 658 263 L640 194 C635 173 629 154 616 143 C601 131 580 124 561 121 L561 106 C576 103 589 91 591 73 L593 50 C593 32 582 20 567 20Z" />
+            <path d="M530 104 C537 111 555 111 562 104 L568 125 C563 134 558 139 546 139 C534 139 529 134 524 125Z" />
+            <path d="M491 316 C507 320 525 325 540 329 L537 397 C535 416 523 426 506 421 C491 416 485 401 488 380Z" />
+            <path d="M552 329 C567 325 585 320 601 316 L604 380 C607 401 601 416 586 421 C569 426 557 416 555 397Z" />
+            <path d="M500 420 C512 425 525 424 536 418 L533 493 C532 508 526 519 516 520 L499 518 C491 514 490 504 492 490Z" />
+            <path d="M558 418 C569 424 582 425 594 420 L602 490 C604 504 603 514 595 518 L578 520 C568 519 562 508 561 493Z" />
           </g>
-          {/* Anatomical separations, tendons and muscle contours */}
-          <g className="body-anatomy-lines">
-            <path d="M162 87 L162 105 M142 105 Q162 114 182 105 M162 105 L162 211 M162 211 L162 285" />
-            <path d="M128 113 Q145 123 162 128 Q179 123 196 113 M121 147 Q141 158 160 157 M164 157 Q184 158 203 147" />
-            <path d="M146 162 Q162 168 178 162 M145 177 Q162 183 179 177 M148 193 Q162 199 176 193" />
-            <path d="M135 211 Q147 227 162 235 Q177 227 189 211 M139 244 Q150 253 162 257 Q174 253 185 244" />
-            <path d="M117 286 Q132 297 150 291 M174 291 Q192 297 207 286 M128 301 Q139 322 133 350 M195 301 Q185 322 191 350" />
-            <path d="M162 286 L162 374 M489 87 L489 105 M469 113 Q489 125 509 113 M449 145 Q469 155 489 171 Q509 155 529 145" />
-            <path d="M448 126 Q466 133 489 151 Q512 133 530 126 M444 159 Q462 177 489 183 Q516 177 534 159" />
-            <path d="M447 183 Q462 209 489 220 Q516 209 531 183 M455 225 Q472 241 489 247 Q506 241 523 225" />
-            <path d="M449 276 Q468 292 489 290 Q510 292 529 276 M458 300 Q473 315 480 344 M520 300 Q505 315 498 344" />
-            <path d="M412 149 Q427 159 442 166 M566 166 Q551 159 536 149 M489 105 L489 285" />
-            {/* Forearm, elbow, knee and calf definition */}
-            <path d="M85 204 L104 216 M239 216 L258 204 M401 204 L420 216 M575 216 L594 204" />
-            <path d="M112 244 Q125 253 137 248 M187 248 Q199 253 212 244 M442 244 Q455 253 467 248 M512 248 Q524 253 537 244" />
+
+          {/* Muscle groups: front */}
+          <g className="body-zones">
+            {zone("Shoulders","M95 145 C104 132 121 126 139 128 C147 139 146 157 136 170 C123 180 105 179 91 166Z","front-left-deltoid")}
+            {zone("Shoulders","M189 128 C207 126 224 132 233 145 L237 166 C223 179 205 180 192 170 C182 157 181 139 189 128Z","front-right-deltoid")}
+            {zone("Chest","M139 143 C148 137 158 139 164 145 L163 190 C147 191 130 184 119 172 C120 158 127 148 139 143Z","front-left-pectoral")}
+            {zone("Chest","M168 145 C174 139 184 137 193 143 C205 148 212 158 213 172 C202 184 185 191 169 190Z","front-right-pectoral")}
+            {zone("Biceps","M88 176 C101 177 113 184 116 197 L104 247 C96 257 84 260 77 249 L81 209Z","front-left-biceps")}
+            {zone("Biceps","M208 197 C211 184 223 177 236 176 L243 209 L247 249 C240 260 228 257 220 247Z","front-right-biceps")}
+            {zone("Triceps","M76 249 C87 258 98 257 105 247 L101 277 C97 291 88 297 79 289 C72 281 72 263 76 249Z","front-left-triceps")}
+            {zone("Triceps","M219 247 C226 257 237 258 248 249 C252 263 252 281 245 289 C236 297 227 291 223 277Z","front-right-triceps")}
+            {zone("Core","M143 190 C151 195 159 196 166 196 C173 196 181 195 189 190 L187 270 C180 286 174 294 166 297 C158 294 152 286 145 270Z","front-abdominals")}
+            {zone("Core","M119 181 C130 188 139 192 145 190 L145 270 C139 282 132 287 122 281 L111 245Z","front-left-oblique")}
+            {zone("Core","M187 190 C193 192 202 188 213 181 L221 245 L210 281 C200 287 193 282 187 270Z","front-right-oblique")}
+            {zone("Legs","M111 319 C127 322 145 328 160 332 L156 399 C150 416 137 426 123 418 C111 409 107 393 109 374Z","front-left-quadriceps")}
+            {zone("Legs","M172 332 C187 328 205 322 221 319 L223 374 C225 393 221 409 209 418 C195 426 182 416 176 399Z","front-right-quadriceps")}
+            {zone("Legs","M112 426 C126 432 141 431 154 425 L150 489 C147 507 138 516 121 513 L114 506Z","front-left-calf")}
+            {zone("Legs","M178 425 C191 431 206 432 220 426 L218 506 L211 513 C194 516 185 507 182 489Z","front-right-calf")}
+
+            {/* Back muscle groups */}
+            {zone("Shoulders","M455 145 C464 132 481 126 499 128 C507 139 506 157 496 170 C483 180 465 179 451 166Z","back-left-deltoid")}
+            {zone("Shoulders","M549 128 C567 126 584 132 593 145 L597 166 C583 179 565 180 552 170 C542 157 541 139 549 128Z","back-right-deltoid")}
+            {zone("Triceps","M448 176 C461 177 473 184 476 197 L464 247 C456 257 444 260 437 249 L441 209Z","back-left-triceps")}
+            {zone("Triceps","M568 197 C571 184 583 177 596 176 L603 209 L607 249 C600 260 588 257 580 247Z","back-right-triceps")}
+            {zone("Back","M507 143 C519 150 533 158 546 167 C559 158 573 150 585 143 L590 180 C578 194 562 202 546 207 C530 202 514 194 502 180Z","trapezius")}
+            {zone("Back","M502 181 C516 196 530 205 546 210 C562 205 576 196 590 181 L585 267 C574 282 561 292 546 297 C531 292 518 282 507 267Z","lats-and-mid-back")}
+            {zone("Back","M507 267 C519 282 531 291 546 297 C561 291 573 282 585 267 L589 314 C575 325 561 331 546 333 C531 331 517 325 503 314Z","lower-back")}
+            {zone("Legs","M491 319 C507 322 525 328 540 332 L536 399 C530 416 517 426 503 418 C491 409 487 393 489 374Z","back-left-hamstring")}
+            {zone("Legs","M552 332 C567 328 585 322 601 319 L603 374 C605 393 601 409 589 418 C575 426 562 416 556 399Z","back-right-hamstring")}
+            {zone("Legs","M492 426 C506 432 521 431 534 425 L530 489 C527 507 518 516 501 513 L494 506Z","back-left-calf")}
+            {zone("Legs","M558 425 C571 431 586 432 600 426 L598 506 L591 513 C574 516 565 507 562 489Z","back-right-calf")}
           </g>
         </g>
-        <g className="body-zones">
-          {/* Front chest and shoulders */}
-          {zone("Shoulders", "M111 112 Q124 99 143 105 L151 124 Q140 143 119 151 L99 145Z", "front-left-deltoid")}
-          {zone("Shoulders", "M181 105 Q200 99 213 112 L225 145 L205 151 Q184 143 173 124Z", "front-right-deltoid")}
-          {zone("Chest", "M128 119 Q145 124 160 130 L158 166 Q139 170 119 151Z", "front-left-pectoralis")}
-          {zone("Chest", "M164 130 Q179 124 196 119 L205 151 Q185 170 166 166Z", "front-right-pectoralis")}
-          {/* Front arms */}
-          {zone("Biceps", "M94 150 Q107 145 119 158 L108 205 L91 219 L79 209Z", "front-left-biceps")}
-          {zone("Biceps", "M205 158 Q217 145 230 150 L245 209 L233 219 L216 205Z", "front-right-biceps")}
-          {zone("Triceps", "M78 207 L92 219 L86 248 L72 225Z", "front-left-triceps")}
-          {zone("Triceps", "M232 219 L246 207 L252 225 L238 248Z", "front-right-triceps")}
-          {/* Abs and obliques */}
-          {zone("Core", "M143 166 Q162 173 181 166 L190 218 Q180 239 162 249 Q144 239 134 218Z", "front-abdominals")}
-          {zone("Core", "M119 158 L137 166 L132 215 L145 244 L128 231 L111 185Z", "front-left-oblique")}
-          {zone("Core", "M187 166 L205 158 L213 185 L196 231 L179 244 L192 215Z", "front-right-oblique")}
-          {/* Front legs */}
-          {zone("Legs", "M117 270 Q136 270 158 282 L151 329 L140 354 L115 348 L110 306Z", "front-left-quadriceps")}
-          {zone("Legs", "M166 282 Q188 270 207 270 L214 306 L209 348 L184 354 L173 329Z", "front-right-quadriceps")}
-          {zone("Legs", "M113 348 L140 354 L146 369 L115 376 L106 365Z", "front-left-calf")}
-          {zone("Legs", "M184 354 L211 348 L218 365 L209 376 L178 369Z", "front-right-calf")}
-          {/* Back shoulders, arms and upper/lower back */}
-          {zone("Shoulders", "M438 112 Q451 99 470 105 L478 124 Q467 143 446 151 L426 145Z", "back-left-deltoid")}
-          {zone("Shoulders", "M508 105 Q527 99 540 112 L552 145 L532 151 Q511 143 500 124Z", "back-right-deltoid")}
-          {zone("Triceps", "M421 150 Q434 145 446 158 L435 205 L418 219 L406 209Z", "back-left-triceps")}
-          {zone("Triceps", "M532 158 Q544 145 557 150 L572 209 L560 219 L543 205Z", "back-right-triceps")}
-          {zone("Back", "M459 117 Q475 128 489 151 Q503 128 519 117 L532 159 Q516 180 489 190 Q462 180 446 159Z", "upper-trapezius")}
-          {zone("Back", "M447 165 Q466 184 489 192 Q512 184 531 165 L523 230 Q507 250 489 258 Q471 250 455 230Z", "lats-and-mid-back")}
-          {zone("Back", "M455 231 Q471 250 489 258 Q507 250 523 231 L526 275 Q507 292 489 292 Q471 292 452 275Z", "lower-back")}
-          {/* Rear legs */}
-          {zone("Legs", "M446 270 Q466 270 485 282 L478 329 L467 354 L442 348 L439 306Z", "back-left-hamstring")}
-          {zone("Legs", "M493 282 Q512 270 532 270 L541 306 L538 348 L513 354 L502 329Z", "back-right-hamstring")}
-          {zone("Legs", "M442 348 L467 354 L473 369 L442 376 L433 365Z", "back-left-calf")}
-          {zone("Legs", "M513 354 L538 348 L545 365 L536 376 L505 369Z", "back-right-calf")}
+
+        {/* Fine anatomical landmarks, deliberately subtle */}
+        <g className="body-anatomy-lines" aria-hidden="true">
+          <path d="M166 113 L166 138 M143 139 C151 147 158 150 166 150 C174 150 181 147 189 139 M123 174 C136 187 149 191 163 190 M169 190 C183 191 196 187 209 174" />
+          <path d="M146 199 C153 205 159 207 166 207 C173 207 179 205 186 199 M146 218 C153 224 159 226 166 226 C173 226 179 224 186 218 M147 239 C154 245 159 247 166 247 C173 247 178 245 185 239 M149 260 C155 265 160 267 166 267 C172 267 177 265 183 260" />
+          <path d="M166 198 L166 289 M112 291 C127 300 143 304 160 304 M172 304 C189 304 205 300 220 291 M133 337 C141 357 139 379 134 397 M199 337 C191 357 193 379 198 397" />
+          <path d="M546 113 L546 139 M507 143 C519 155 533 164 546 171 C559 164 573 155 585 143 M507 181 C520 198 532 211 546 218 C560 211 572 198 585 181 M513 231 C524 242 535 248 546 251 C557 248 568 242 579 231 M510 272 C522 284 533 291 546 295 C559 291 570 284 582 272 M546 211 L546 329" />
+          <path d="M456 205 L473 218 M596 218 L613 205 M491 291 C505 302 520 307 537 307 M555 307 C572 307 587 302 601 291" />
         </g>
+        <g className="body-view-labels">
+          <text x="166" y="552">ANTERIOR</text>
+          <text x="546" y="552">POSTERIOR</text>
         </g>
       </svg>
+      <div className="body-diagram-footer"><span>SELECT A MUSCLE GROUP</span><span className="body-diagram-active"><i /> {selectedMuscle.toUpperCase()} ACTIVE</span></div>
     </div>
   );
 }

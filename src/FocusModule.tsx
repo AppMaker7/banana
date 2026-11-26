@@ -29,6 +29,9 @@ export default function FocusModule() {
   const [challengeDone, setChallengeDone] = useState(false);
   const [history, setHistory] = useState<FocusLog[]>([]);
   const [breakEarned, setBreakEarned] = useState(0);
+  const [breakMinutes, setBreakMinutes] = useState(10);
+  const [breakRemaining, setBreakRemaining] = useState(0);
+  const [breakRunning, setBreakRunning] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -56,7 +59,9 @@ export default function FocusModule() {
       }).eq("id", sessionId);
       if (finishError) throw finishError;
       setMessage(completed ? "Focus session complete. Nice work." : "Session ended and saved.");
-      setBreakEarned(completed ? 5 : 0);
+      setBreakEarned(completed ? breakMinutes : 0);
+      setBreakRemaining(completed ? breakMinutes * 60 : 0);
+      setBreakRunning(false);
       setSessionId(null);
       setRemaining(minutes * 60);
       await loadHistory();
@@ -81,6 +86,23 @@ export default function FocusModule() {
     return () => window.clearInterval(timer);
   }, [running, sessionId, minutes, challengeDone]);
 
+  useEffect(() => {
+    if (!breakRunning) return;
+    const timer = window.setInterval(() => {
+      setBreakRemaining((value) => {
+        if (value <= 1) {
+          window.clearInterval(timer);
+          setBreakRunning(false);
+          setBreakEarned(0);
+          setMessage("Your break timer is complete.");
+          return 0;
+        }
+        return value - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [breakRunning]);
+
   async function startSession() {
     if (!supabase || sessionId) return;
     setBusy(true); setError(""); setMessage("");
@@ -99,6 +121,8 @@ export default function FocusModule() {
       setRemaining(minutes * 60);
       setChallengeDone(false);
       setBreakEarned(0);
+      setBreakRemaining(0);
+      setBreakRunning(false);
       setRunning(true);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Couldn't start focus mode.");
@@ -134,17 +158,18 @@ export default function FocusModule() {
               <button className="module-primary" onClick={() => void finishSession(false)}>End session</button>
             </div>
           )}
-          {breakEarned > 0 && <div className="break-earned"><strong>{breakEarned}-minute break unlocked in BANANA</strong><span>This is a tracked break, not an Android app lock or unlock.</span></div>}
+          {breakEarned > 0 && <div className="break-earned"><strong>{breakEarned}-minute break timer available</strong><span>{breakRunning ? "Break in progress" : breakRemaining > 0 ? "Paused at " + clock(breakRemaining) : "Start it when you are ready."} · This does not unlock or block other Android apps.</span><div className="break-controls">{!breakRunning ? <button className="module-small-button" onClick={() => { if (breakRemaining === 0) setBreakRemaining(breakMinutes * 60); setBreakRunning(true); }}>{breakRemaining > 0 ? "Resume break" : "Start break"}</button> : <button className="module-secondary" onClick={() => setBreakRunning(false)}>Pause break</button>}<button className="module-secondary" onClick={() => { setBreakRunning(false); setBreakRemaining(0); setBreakEarned(0); }}>End break</button></div></div>}
         </article>
         <article className="module-card">
           <div className="module-card-head"><div><p className="eyebrow">OPTIONAL RESET</p><h3>Choose a break challenge</h3><p>Gentle options — no exercise test required.</p></div><span>RESET</span></div>
+          <label className="module-label">Break duration<select className="module-input" value={breakMinutes} onChange={(event) => setBreakMinutes(Number(event.target.value))} disabled={Boolean(sessionId)}>{[5,10,15,20].map((value) => <option key={value} value={value}>{value} minutes</option>)}</select></label>
           <label className="module-label">Break activity<select className="module-input" value={challenge} onChange={(event) => setChallenge(event.target.value)} disabled={Boolean(sessionId)}>{challenges.map((item) => <option key={item}>{item}</option>)}</select></label>
           <label className="challenge-check"><input type="checkbox" checked={challengeDone} onChange={(event) => setChallengeDone(event.target.checked)} disabled={!sessionId} /><span><strong>Mark my reset complete</strong><small>Optional. You can finish a focus session without completing it.</small></span></label>
           <div className="focus-info">
             <strong>What this web version can do</strong>
             <p>Track timers, sessions, and break history. It cannot pause or block other Android apps. System-wide app restrictions would need a separately installed Android companion with the required permissions.</p>
           </div>
-          <button className="module-secondary" onClick={() => { if (sessionId) { void finishSession(false); } else { setRunning(false); setRemaining(minutes * 60); setChallengeDone(false); setMessage("Focus timer reset. No app restrictions were changed."); } }}>Emergency stop / reset</button>
+          <button className="module-secondary" onClick={() => { if (sessionId) { void finishSession(false); } else { setRunning(false); setRemaining(minutes * 60); setChallengeDone(false); setBreakRunning(false); setBreakRemaining(0); setBreakEarned(0); setMessage("Focus timer reset. No app restrictions were changed."); } }}>Emergency stop / reset</button>
         </article>
       </div>
       <article className="module-card">

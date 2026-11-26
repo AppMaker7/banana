@@ -59,9 +59,7 @@ export default function HealthModule() {
   const [busy, setBusy] = useState(false);
   const [filter, setFilter] = useState("All");
   const [selectedMuscle, setSelectedMuscle] = useState("Chest");
-  const [muscleTotals, setMuscleTotals] = useState<Record<string, number>>({});
   const [muscleBests, setMuscleBests] = useState<Record<string, number>>({});
-  const [loggedSetCount, setLoggedSetCount] = useState(0);
 
   async function loadHealth() {
     if (!supabase) return;
@@ -81,27 +79,21 @@ export default function HealthModule() {
       allSets.push(...(data ?? []));
       if (!data || data.length < 1000) break;
     }
-    const totals: Record<string, number> = {};
     const bests: Record<string, number> = {};
-    MUSCLE_GROUPS.forEach((muscle) => { totals[muscle] = 0; bests[muscle] = 0; });
+    MUSCLE_GROUPS.forEach((muscle) => { bests[muscle] = 0; });
     allSets.forEach((item) => {
       if (Object.prototype.hasOwnProperty.call(totals, item.muscle_group)) {
         const setReps = Math.max(0, Number(item.reps || 0));
-        totals[item.muscle_group] += setReps;
         bests[item.muscle_group] = Math.max(bests[item.muscle_group], setReps);
       }
     });
-    setMuscleTotals(totals);
     setMuscleBests(bests);
-    setLoggedSetCount(allSets.length);
   }
 
   useEffect(() => { void loadHealth(); }, []);
 
-  const totalReps = Object.values(muscleTotals).reduce((sum, value) => sum + value, 0);
   const selectedReps = muscleBests[selectedMuscle] ?? 0;
   const selectedRank = getMuscleRank(selectedReps);
-  const completedSessions = history.filter((session) => Boolean(session.completed_at)).length;
 
   const filteredLibrary = useMemo(
     () => library.filter((item) => filter === "All" || item.muscle === filter),

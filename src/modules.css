@@ -76,3 +76,47 @@
 .break-earned strong{color:#FFE44D;font-size:10px}
 .break-earned span{color:#9AAAB2;font-size:8px;line-height:1.5}
 @media(max-width:760px){.focus-layout{grid-template-columns:1fr}}
+
+/* BANANA Assistant */
+.assistant-notice{border-color:#35DDF544;background:#10232B;color:#A8DCE5;line-height:1.5}
+.assistant-answer{min-height:104px;padding:14px;border:1px solid #2A3B45;border-radius:10px;background:#0A141C;color:#C9D5DA;font-size:11px;line-height:1.7}
+.assistant-question{display:flex;gap:7px;margin-top:10px}
+.assistant-project-label{margin-top:12px}
+.assistant-preview-list{display:grid;gap:8px;margin:16px 0}
+.assistant-preview-list>div{display:flex;gap:9px;align-items:flex-start;padding:9px 10px;border:1px solid #263640;border-radius:8px;background:#0B151D;color:#C3D0D6;font-size:9px;line-height:1.5}
+.assistant-preview-list span{color:#FFE44D}
+.assistant-task{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-top:1px solid #22313B;cursor:pointer}
+.assistant-task input{margin:2px 0 0;accent-color:#FFE44D}
+.assistant-task span{display:grid;gap:4px}
+.assistant-task strong{font-size:10px;color:#EAF0F2}
+.assistant-task small{font-size:8px;color:#82919C;line-height:1.5}
+.assistant-task.completed strong{text-decoration:line-through;color:#82919C}
+@media(max-width:440px){.assistant-question{flex-direction:column}.assistant-question .module-small-button,.assistant-question .module-primary{padding:11px}}
+/* BANANA Music */
+.playlist-create{display:grid;grid-template-columns:1fr auto;gap:7px;margin-bottom:13px}
+.music-track-list{display:grid;margin-top:10px;max-height:340px;overflow:auto}
+.music-track{display:grid;grid-template-columns:30px minmax(0,1fr) 28px;align-items:center;gap:9px;padding:10px 0;border-top:1px solid #22313B}
+.music-track.active{background:#35DDF508}
+.music-track>div{display:grid;gap:4px;min-width:0}
+.music-track strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#EAF0F2;font-size:10px}
+.music-track small{color:#82919C;font-size:8px}
+.music-track-play{width:28px;height:28px;border:1px solid #FFE44D55;border-radius:8px;background:#FFE44D12;color:#FFE44D;font-size:10px}
+.music-track-remove{border:0;background:transparent;color:#8C9AA3;font-size:18px}
+.upload-audio{padding:13px;border:1px dashed #3A515D;border-radius:10px;background:#0B151D}
+.upload-audio input{width:100%;margin-top:10px;color:#B8C5CB;font-size:9px}
+.upload-audio small{color:#82919C;font-size:8px;line-height:1.5;font-weight:400;letter-spacing:0;text-transform:none}
+.module-divider-label{margin:16px 0 11px;color:#82919C;font-size:8px;font-weight:700;letter-spacing:.13em}
+.music-link-form{display:grid;gap:10px}
+.music-player-card{background:radial-gradient(ellipse at 10% 10%,#FFE44D12,transparent 35%),#101A23}
+.music-player-top{display:flex;align-items:center;gap:13px;margin-bottom:15px}
+.music-art{width:54px;height:54px;display:grid;place-items:center;border:1px solid #FFE44D55;border-radius:13px;background:linear-gradient(145deg,#FFE44D22,#35DDF511);color:#FFE44D;font-size:27px}
+.music-player-top>div:nth-child(2){flex:1;min-width:0}
+.music-player-top h3{margin:4px 0;font:600 16px "Space Grotesk",sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.music-player-top p:not(.eyebrow){margin:0;color:#82919C;font-size:9px}
+.music-player-card audio{width:100%;height:40px;filter:invert(.85) hue-rotate(160deg) saturate(.6)}
+.music-player-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+@media(max-width:440px){.music-player-top .module-pill{display:none}.playlist-create{grid-template-columns:1fr auto}}
+/* Mobile navigation adapts to the expanded V2 modules */
+.mobile-nav{grid-template-columns:repeat(6,minmax(0,1fr))}
+.mobile-nav-item{min-width:0}
+.mobile-nav-item small{font-size:8px}

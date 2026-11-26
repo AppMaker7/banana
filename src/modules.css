@@ -375,3 +375,18 @@
   .anatomy-muscle-select{gap:5px}
   .anatomy-muscle-button{min-height:32px;font-size:8px}
 }
+
+
+/* Clean fitness figures — compact, calm, and non-medical */
+.anatomy-reference .fitness-figures{
+  display:flex;justify-content:center;align-items:center;gap:clamp(12px,5vw,34px);
+  width:100%;max-width:420px;margin:0 auto;padding:4px 0 0;
+}
+.anatomy-reference .fitness-figure{
+  display:block;width:min(42%,150px);height:auto;max-height:260px;overflow:visible;
+}
+.anatomy-reference .anatomy-reference-caption{margin-top:4px}
+@media(max-width:600px){
+  .anatomy-reference .fitness-figures{gap:12px}
+  .anatomy-reference .fitness-figure{width:min(43%,125px);max-height:230px}
+}

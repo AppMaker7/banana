@@ -8,13 +8,13 @@ type Exercise = { name: string; muscle: string; hint: string };
 type Plan = { id: string; name: string; description: string | null; plan_data: { exercises?: Exercise[] } };
 type Session = { id: string; name: string; started_at: string; completed_at: string | null };
 type LoggedSet = { id: string; exercise_name: string; muscle_group: string; set_number: number; reps: number; weight: number };
-const MUSCLE_GROUPS = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Legs"];
+const MUSCLE_GROUPS = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Glutes", "Legs"];
 const REP_RANKS = [
-  { name: "Unranked", min: 0 }, { name: "Bronze", min: 10 },
+  { name: "Wood", min: 0 }, { name: "Bronze", min: 10 },
   { name: "Silver", min: 20 }, { name: "Gold", min: 35 },
   { name: "Platinum", min: 50 }, { name: "Diamond", min: 70 },
-  { name: "Master", min: 90 }, { name: "Grandmaster", min: 120 },
-  { name: "Legend", min: 150 }, { name: "Mythic", min: 200 },
+  { name: "Champion", min: 90 }, { name: "Titan", min: 120 },
+  { name: "Olympian", min: 150 },
 ];
 function getMuscleRank(reps: number) {
   const index = REP_RANKS.reduce((best, rank, i) => reps >= rank.min ? i : best, 0);
@@ -38,6 +38,8 @@ const library: Exercise[] = [
   { name: "Dead bugs", muscle: "Core", hint: "Bodyweight · steady breathing" },
   { name: "Bodyweight squats", muscle: "Legs", hint: "Bodyweight · comfortable range" },
   { name: "Reverse lunges", muscle: "Legs", hint: "Bodyweight · controlled steps" },
+  { name: "Glute bridges", muscle: "Glutes", hint: "Bodyweight · controlled movement" },
+  { name: "Bodyweight hip hinges", muscle: "Glutes", hint: "Bodyweight · comfortable range" },
 ];
 
 export default function HealthModule() {

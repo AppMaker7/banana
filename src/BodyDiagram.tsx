@@ -32,7 +32,7 @@ export default function BodyDiagram({ selectedMuscle, onSelect }: Props) {
             <feGaussianBlur stdDeviation="5" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
-        <g transform="translate(-34 0) scale(1.1 1.42)">
+        <g transform="translate(-34 0) scale(1.1 1.52)">
         <g className="anatomy-figure">
           {/* Front silhouette */}
           <g className="body-base">

@@ -1,6 +1,6 @@
 type Props = { selectedMuscle: string; onSelect: (muscle: string) => void };
 
-const groups = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Legs"];
+const groups = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Glutes", "Legs"];
 
 function Figure({ back }: { back: boolean }) {
   return (

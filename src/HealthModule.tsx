@@ -10,10 +10,11 @@ type Session = { id: string; name: string; started_at: string; completed_at: str
 type LoggedSet = { id: string; exercise_name: string; muscle_group: string; set_number: number; reps: number; weight: number };
 const MUSCLE_GROUPS = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Legs"];
 const REP_RANKS = [
-  { name: "Unranked", min: 0 }, { name: "Bronze", min: 100 },
-  { name: "Silver", min: 250 }, { name: "Gold", min: 500 },
-  { name: "Platinum", min: 1000 }, { name: "Diamond", min: 2000 },
-  { name: "Master", min: 5000 }, { name: "Legend", min: 10000 },
+  { name: "Unranked", min: 0 }, { name: "Bronze", min: 10 },
+  { name: "Silver", min: 20 }, { name: "Gold", min: 35 },
+  { name: "Platinum", min: 50 }, { name: "Diamond", min: 70 },
+  { name: "Master", min: 90 }, { name: "Grandmaster", min: 120 },
+  { name: "Legend", min: 150 }, { name: "Mythic", min: 200 },
 ];
 function getMuscleRank(reps: number) {
   const index = REP_RANKS.reduce((best, rank, i) => reps >= rank.min ? i : best, 0);
@@ -59,6 +60,7 @@ export default function HealthModule() {
   const [filter, setFilter] = useState("All");
   const [selectedMuscle, setSelectedMuscle] = useState("Chest");
   const [muscleTotals, setMuscleTotals] = useState<Record<string, number>>({});
+  const [muscleBests, setMuscleBests] = useState<Record<string, number>>({});
   const [loggedSetCount, setLoggedSetCount] = useState(0);
 
   async function loadHealth() {
@@ -80,18 +82,24 @@ export default function HealthModule() {
       if (!data || data.length < 1000) break;
     }
     const totals: Record<string, number> = {};
-    MUSCLE_GROUPS.forEach((muscle) => { totals[muscle] = 0; });
+    const bests: Record<string, number> = {};
+    MUSCLE_GROUPS.forEach((muscle) => { totals[muscle] = 0; bests[muscle] = 0; });
     allSets.forEach((item) => {
-      if (Object.prototype.hasOwnProperty.call(totals, item.muscle_group)) totals[item.muscle_group] += Number(item.reps || 0);
+      if (Object.prototype.hasOwnProperty.call(totals, item.muscle_group)) {
+        const setReps = Math.max(0, Number(item.reps || 0));
+        totals[item.muscle_group] += setReps;
+        bests[item.muscle_group] = Math.max(bests[item.muscle_group], setReps);
+      }
     });
     setMuscleTotals(totals);
+    setMuscleBests(bests);
     setLoggedSetCount(allSets.length);
   }
 
   useEffect(() => { void loadHealth(); }, []);
 
   const totalReps = Object.values(muscleTotals).reduce((sum, value) => sum + value, 0);
-  const selectedReps = muscleTotals[selectedMuscle] ?? 0;
+  const selectedReps = muscleBests[selectedMuscle] ?? 0;
   const selectedRank = getMuscleRank(selectedReps);
   const completedSessions = history.filter((session) => Boolean(session.completed_at)).length;
 
@@ -240,10 +248,10 @@ export default function HealthModule() {
             <p className="eyebrow">SELECTED MUSCLE</p>
             <h3>{selectedMuscle}</h3>
             <div className="bodygraph-rank"><strong>{selectedRank.name}</strong><span>MUSCLE RANK</span></div>
-            <p className="bodygraph-total">{selectedReps.toLocaleString()} <span>lifetime reps</span></p>
+            <p className="bodygraph-total">{selectedReps.toLocaleString()} <span>best consecutive reps</span></p>
             <div className="muscle-rank-progress" role="progressbar" aria-label={selectedMuscle + " rank progress"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(selectedRank.progress)}><i style={{ width: selectedRank.progress + "%" }} /></div>
-            <p className="muscle-rank-next">{selectedRank.next ? (selectedRank.next.min - selectedReps).toLocaleString() + " reps to " + selectedRank.next.name : "Maximum rank reached"}</p>
-            <p className="module-footnote">Ranks are based on your lifetime reps for each muscle group. Every saved set counts.</p>
+            <p className="muscle-rank-next">{selectedRank.next ? (selectedRank.next.min - selectedReps).toLocaleString() + " reps in one set to " + selectedRank.next.name : "Maximum rank reached"}</p>
+            <p className="module-footnote">Your rank uses your highest-rep set for this muscle group. Only your best consecutive set counts.</p>
             <button className="module-small-button" onClick={() => setFilter(selectedMuscle)}>View {selectedMuscle.toLowerCase()} exercises</button>
           </aside>
         </div>

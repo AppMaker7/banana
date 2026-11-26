@@ -82,7 +82,7 @@ export default function HealthModule() {
     const bests: Record<string, number> = {};
     MUSCLE_GROUPS.forEach((muscle) => { bests[muscle] = 0; });
     allSets.forEach((item) => {
-      if (Object.prototype.hasOwnProperty.call(totals, item.muscle_group)) {
+      if (Object.prototype.hasOwnProperty.call(bests, item.muscle_group)) {
         const setReps = Math.max(0, Number(item.reps || 0));
         bests[item.muscle_group] = Math.max(bests[item.muscle_group], setReps);
       }

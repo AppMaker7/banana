@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import "./modules.css";
 import { supabase } from "./lib/supabase";
+import BodyDiagram from "./BodyDiagram";
 
 type Exercise = { name: string; muscle: string; hint: string };
 type Plan = { id: string; name: string; description: string | null; plan_data: { exercises?: Exercise[] } };
@@ -42,20 +43,36 @@ export default function HealthModule() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [filter, setFilter] = useState("All");
+  const [selectedMuscle, setSelectedMuscle] = useState("Chest");
+  const [muscleTotals, setMuscleTotals] = useState<Record<string, number>>({});
+  const [loggedSetCount, setLoggedSetCount] = useState(0);
 
   async function loadHealth() {
     if (!supabase) return;
-    const [{ data: planData, error: planError }, { data: sessionData, error: sessionError }] = await Promise.all([
+    const [{ data: planData, error: planError }, { data: sessionData, error: sessionError }, { data: setData, error: setErrorData }] = await Promise.all([
       supabase.from("workout_plans").select("id,name,description,plan_data").eq("is_archived", false).order("created_at", { ascending: false }),
       supabase.from("workout_sessions").select("id,name,started_at,completed_at").order("started_at", { ascending: false }).limit(12),
+      supabase.from("workout_sets").select("muscle_group,reps").limit(2000),
     ]);
     if (planError) setError(planError.message);
     if (sessionError) setError(sessionError.message);
+    if (setErrorData) setError(setErrorData.message);
     setPlans((planData ?? []) as Plan[]);
     setHistory((sessionData ?? []) as Session[]);
+    const totals: Record<string, number> = {};
+    (setData ?? []).forEach((item: { muscle_group: string; reps: number }) => {
+      totals[item.muscle_group] = (totals[item.muscle_group] ?? 0) + Number(item.reps || 0);
+    });
+    setMuscleTotals(totals);
+    setLoggedSetCount((setData ?? []).length);
   }
 
   useEffect(() => { void loadHealth(); }, []);
+
+  const totalReps = Object.values(muscleTotals).reduce((sum, value) => sum + value, 0);
+  const rankedMuscles = Object.entries(muscleTotals).sort((a, b) => b[1] - a[1]);
+  const selectedRank = Math.max(1, rankedMuscles.findIndex(([name]) => name === selectedMuscle) + 1);
+  const completedSessions = history.filter((session) => Boolean(session.completed_at)).length;
 
   const filteredLibrary = useMemo(
     () => library.filter((item) => filter === "All" || item.muscle === filter),
@@ -187,6 +204,27 @@ export default function HealthModule() {
         <span className="module-pill">CLOUD SAVED</span>
       </div>
       {(error || message) && <p className={error ? "module-alert error" : "module-alert"} role="status">{error || message}</p>}
+
+      <section className="health-v3-stats" aria-label="Health overview">
+        <article><span>LOGGED REPS</span><strong>{totalReps.toLocaleString()}</strong><small>Across your saved sets</small></article>
+        <article><span>SETS TRACKED</span><strong>{loggedSetCount.toLocaleString()}</strong><small>Saved workout sets</small></article>
+        <article><span>COMPLETED SESSIONS</span><strong>{completedSessions}</strong><small>In recent history</small></article>
+      </section>
+
+      <article className="module-card bodygraph-v3-card">
+        <div className="module-card-head"><div><p className="eyebrow">INTERACTIVE BODY MAP</p><h3>Explore your muscle groups</h3><p>Select an area on the diagram or use the muscle buttons.</p></div><span>LIVE DATA</span></div>
+        <div className="bodygraph-v3-layout">
+          <BodyDiagram selectedMuscle={selectedMuscle} onSelect={(muscle) => { setSelectedMuscle(muscle); setFilter(muscle); }} />
+          <aside className="bodygraph-v3-detail">
+            <p className="eyebrow">SELECTED MUSCLE</p>
+            <h3>{selectedMuscle}</h3>
+            <div className="bodygraph-rank"><strong>#{selectedRank}</strong><span>BY TOTAL REPS</span></div>
+            <p className="bodygraph-total">{(muscleTotals[selectedMuscle] ?? 0).toLocaleString()} <span>reps logged</span></p>
+            <p className="module-footnote">Rankings use the reps saved in your workout sets. Log sets in a workout to update this map.</p>
+            <button className="module-small-button" onClick={() => setFilter(selectedMuscle)}>View {selectedMuscle.toLowerCase()} exercises</button>
+          </aside>
+        </div>
+      </article>
 
       <div className="module-grid two">
         <article className="module-card">

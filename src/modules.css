@@ -295,3 +295,28 @@
 .bodygraph-screen .body-diagram-footer{color:#A99F69}
 .bodygraph-screen .body-diagram-active{color:#FFE44D}
 .bodygraph-screen .body-diagram-active i{background:#FFE44D;box-shadow:0 0 9px #FFE44D88}
+
+
+/* Yellow/black single-set muscle rank ladder */
+.bodygraph-selected-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;align-items:center;margin:14px 0;padding:17px;border:1px solid #403713;border-radius:16px;background:linear-gradient(135deg,#1D1A0B,#10100A)}
+.bodygraph-summary-label,.bodygraph-summary-rank>span{color:#A99F69;font-size:8px;font-weight:800;letter-spacing:.15em}
+.bodygraph-selected-summary h4{margin:5px 0 0;color:#FFF8D6;font:700 24px "Space Grotesk",sans-serif}
+.bodygraph-summary-score{display:grid;justify-items:end;gap:2px}
+.bodygraph-summary-score strong{color:#FFE44D;font:700 34px "Space Grotesk",sans-serif;line-height:1}
+.bodygraph-summary-score span{color:#A99F69;font-size:7px;font-weight:800;letter-spacing:.1em}
+.bodygraph-summary-rank{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #3B3316}
+.bodygraph-summary-rank strong{color:#FFE44D;font:700 17px "Space Grotesk",sans-serif}
+.bodygraph-ladder{display:grid;gap:7px;margin:12px 0 15px}
+.bodygraph-ladder-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:11px;padding:10px 12px;border:1px solid #302A15;border-radius:12px;background:#141208;opacity:.72}
+.bodygraph-ladder-row.achieved{opacity:1;border-color:#62521A;background:#211C09}
+.bodygraph-ladder-row.current{opacity:1;border-color:#FFE44D;background:linear-gradient(100deg,#332A08,#1B1809);box-shadow:0 0 0 1px #FFE44D35,0 0 18px #FFE44D0D}
+.bodygraph-ladder-badge{width:34px;height:34px;display:grid;place-items:center;clip-path:polygon(50% 0,91% 22%,91% 78%,50% 100%,9% 78%,9% 22%);background:linear-gradient(145deg,#FFE44D,#A77F00);color:#171300;font:800 13px "Space Grotesk",sans-serif}
+.bodygraph-ladder-row:not(.achieved):not(.current) .bodygraph-ladder-badge{background:#39321A;color:#A99F69}
+.bodygraph-ladder-name{display:grid;gap:3px;min-width:0}
+.bodygraph-ladder-name strong{color:#FFF4C4;font:700 13px "Space Grotesk",sans-serif}
+.bodygraph-ladder-name small{color:#A99F69;font-size:9px}
+.bodygraph-ladder-status{color:#A99F69;font-size:7px;font-weight:900;letter-spacing:.1em;text-align:right}
+.bodygraph-ladder-row.current .bodygraph-ladder-status{color:#FFE44D}
+.bodygraph-rankings>.module-footnote{margin:8px 0 14px}
+@media(min-width:760px){.bodygraph-ladder{max-width:760px}.bodygraph-selected-summary{max-width:760px}}
+@media(max-width:440px){.bodygraph-ladder-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:9px}.bodygraph-ladder-status{font-size:6px}.bodygraph-selected-summary{padding:14px}}

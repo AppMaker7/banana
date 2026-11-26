@@ -8,7 +8,6 @@ const RANKS = [
   { name: "Olympian", min: 150 },
 ];
 const MUSCLES = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Glutes", "Legs"];
-const palette = ["#9C7048", "#B77A50", "#B6C1CA", "#E7BE48", "#6CC9BC", "#6BB7E8", "#A98AE7", "#D9785B", "#F0D889"];
 
 function rankFor(reps: number) {
   let index = 0;
@@ -47,7 +46,6 @@ export default function RankCenter({ muscleBests, exerciseBests, selectedMuscle,
   const overall = rankFor(bestExercise?.[1] ?? 0);
   const trackedMuscles = MUSCLES.filter((muscle) => (muscleBests[muscle] ?? 0) > 0).length;
   const trackedExercises = exerciseRows.length;
-  const totalLoggedReps = exerciseRows.reduce((sum, [, reps]) => sum + reps, 0);
   return (
     <div className="rank-center">
       <section className="rank-hero">

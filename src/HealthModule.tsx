@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
+import "./modules.css";
 import { supabase } from "./lib/supabase";
 
 type Exercise = { name: string; muscle: string; hint: string };
@@ -156,7 +158,7 @@ export default function HealthModule() {
     } finally { setBusy(false); }
   }
 
-  async function saveRecovery(event: React.FormEvent<HTMLFormElement>) {
+  async function saveRecovery(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase) return;
     setBusy(true); setError(""); setMessage("");

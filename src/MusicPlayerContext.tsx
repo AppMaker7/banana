@@ -17,6 +17,7 @@ type PlayerValue = {
   togglePlayback: () => void;
   nextTrack: () => Promise<void>;
   previousTrack: () => Promise<void>;
+  stopPlayback: () => void;
 };
 
 const MusicPlayerContext = createContext<PlayerValue | null>(null);
@@ -32,7 +33,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   const objectUrlRef = useRef<string | null>(null);
   const queueRef = useRef<Track[]>([]);
   const currentRef = useRef<Track | null>(null);
-  const [queue, setQueueState] = useState<Track[]>([]);
+  const [, setQueueState] = useState<Track[]>([]);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playerError, setPlayerError] = useState("");
@@ -88,6 +89,14 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     await playTrack(list[(index - 1 + list.length) % list.length]);
   }
 
+  function stopPlayback() {
+    const audio = audioRef.current;
+    if (audio) { audio.pause(); audio.removeAttribute("src"); audio.load(); }
+    currentRef.current = null;
+    setCurrentTrack(null);
+    setIsPlaying(false);
+  }
+
   function togglePlayback() {
     const audio = audioRef.current;
     if (!audio || !currentTrack) return;
@@ -103,7 +112,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value: PlayerValue = {
-    currentTrack, isPlaying, playerError, setQueue, playTrack, togglePlayback, nextTrack, previousTrack,
+    currentTrack, isPlaying, playerError, setQueue, playTrack, togglePlayback, nextTrack, previousTrack, stopPlayback,
   };
 
   return (

@@ -8,6 +8,20 @@ type Exercise = { name: string; muscle: string; hint: string };
 type Plan = { id: string; name: string; description: string | null; plan_data: { exercises?: Exercise[] } };
 type Session = { id: string; name: string; started_at: string; completed_at: string | null };
 type LoggedSet = { id: string; exercise_name: string; muscle_group: string; set_number: number; reps: number; weight: number };
+const MUSCLE_GROUPS = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Legs"];
+const REP_RANKS = [
+  { name: "Unranked", min: 0 }, { name: "Bronze", min: 100 },
+  { name: "Silver", min: 250 }, { name: "Gold", min: 500 },
+  { name: "Platinum", min: 1000 }, { name: "Diamond", min: 2000 },
+  { name: "Master", min: 5000 }, { name: "Legend", min: 10000 },
+];
+function getMuscleRank(reps: number) {
+  const index = REP_RANKS.reduce((best, rank, i) => reps >= rank.min ? i : best, 0);
+  const current = REP_RANKS[index];
+  const next = REP_RANKS[index + 1] ?? null;
+  const progress = next ? Math.max(0, Math.min(100, ((reps - current.min) / (next.min - current.min)) * 100)) : 100;
+  return { ...current, next, progress };
+}
 
 const library: Exercise[] = [
   { name: "Push-ups", muscle: "Chest", hint: "Bodyweight · controlled reps" },
@@ -49,29 +63,36 @@ export default function HealthModule() {
 
   async function loadHealth() {
     if (!supabase) return;
-    const [{ data: planData, error: planError }, { data: sessionData, error: sessionError }, { data: setData, error: setErrorData }] = await Promise.all([
+    const [{ data: planData, error: planError }, { data: sessionData, error: sessionError }] = await Promise.all([
       supabase.from("workout_plans").select("id,name,description,plan_data").eq("is_archived", false).order("created_at", { ascending: false }),
       supabase.from("workout_sessions").select("id,name,started_at,completed_at").order("started_at", { ascending: false }).limit(12),
-      supabase.from("workout_sets").select("muscle_group,reps").limit(2000),
     ]);
     if (planError) setError(planError.message);
     if (sessionError) setError(sessionError.message);
-    if (setErrorData) setError(setErrorData.message);
     setPlans((planData ?? []) as Plan[]);
     setHistory((sessionData ?? []) as Session[]);
+    const allSets: { muscle_group: string; reps: number }[] = [];
+    for (let offset = 0; ; offset += 1000) {
+      const { data, error: setErrorData } = await supabase.from("workout_sets")
+        .select("muscle_group,reps").order("created_at", { ascending: true }).range(offset, offset + 999);
+      if (setErrorData) { setError(setErrorData.message); break; }
+      allSets.push(...(data ?? []));
+      if (!data || data.length < 1000) break;
+    }
     const totals: Record<string, number> = {};
-    (setData ?? []).forEach((item: { muscle_group: string; reps: number }) => {
-      totals[item.muscle_group] = (totals[item.muscle_group] ?? 0) + Number(item.reps || 0);
+    MUSCLE_GROUPS.forEach((muscle) => { totals[muscle] = 0; });
+    allSets.forEach((item) => {
+      if (Object.prototype.hasOwnProperty.call(totals, item.muscle_group)) totals[item.muscle_group] += Number(item.reps || 0);
     });
     setMuscleTotals(totals);
-    setLoggedSetCount((setData ?? []).length);
+    setLoggedSetCount(allSets.length);
   }
 
   useEffect(() => { void loadHealth(); }, []);
 
   const totalReps = Object.values(muscleTotals).reduce((sum, value) => sum + value, 0);
-  const rankedMuscles = Object.entries(muscleTotals).sort((a, b) => b[1] - a[1]);
-  const selectedRank = rankedMuscles.findIndex(([name]) => name === selectedMuscle) + 1;
+  const selectedReps = muscleTotals[selectedMuscle] ?? 0;
+  const selectedRank = getMuscleRank(selectedReps);
   const completedSessions = history.filter((session) => Boolean(session.completed_at)).length;
 
   const filteredLibrary = useMemo(
@@ -218,9 +239,11 @@ export default function HealthModule() {
           <aside className="bodygraph-v3-detail">
             <p className="eyebrow">SELECTED MUSCLE</p>
             <h3>{selectedMuscle}</h3>
-            <div className="bodygraph-rank"><strong>{selectedRank ? "#" + selectedRank : "—"}</strong><span>BY TOTAL REPS</span></div>
-            <p className="bodygraph-total">{(muscleTotals[selectedMuscle] ?? 0).toLocaleString()} <span>reps logged</span></p>
-            <p className="module-footnote">Rankings use the reps saved in your workout sets. Log sets in a workout to update this map.</p>
+            <div className="bodygraph-rank"><strong>{selectedRank.name}</strong><span>MUSCLE RANK</span></div>
+            <p className="bodygraph-total">{selectedReps.toLocaleString()} <span>lifetime reps</span></p>
+            <div className="muscle-rank-progress" role="progressbar" aria-label={selectedMuscle + " rank progress"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(selectedRank.progress)}><i style={{ width: selectedRank.progress + "%" }} /></div>
+            <p className="muscle-rank-next">{selectedRank.next ? (selectedRank.next.min - selectedReps).toLocaleString() + " reps to " + selectedRank.next.name : "Maximum rank reached"}</p>
+            <p className="module-footnote">Ranks are based on your lifetime reps for each muscle group. Every saved set counts.</p>
             <button className="module-small-button" onClick={() => setFilter(selectedMuscle)}>View {selectedMuscle.toLowerCase()} exercises</button>
           </aside>
         </div>

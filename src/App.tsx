@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import HealthModule from "./HealthModule";
 import FocusModule from "./FocusModule";
+import AssistantModule from "./AssistantModule";
+import MusicModule from "./MusicModule";
 
 type Tab = "Home" | "Health" | "Focus" | "AI" | "Music" | "Settings";
 
@@ -275,6 +277,10 @@ function App() {
             </>
           ) : active === "Focus" ? (
             <FocusModule />
+          ) : active === "AI" ? (
+            <AssistantModule />
+          ) : active === "Music" ? (
+            <MusicModule />
           ) : (
             <section className="placeholder-panel">
               <div className="placeholder-symbol">{active === "Focus" ? "◷" : "⚙"}</div>

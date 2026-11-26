@@ -126,3 +126,28 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .muscle-dropdown .muscle-exercise-heading h3{font-size:16px}
 .muscle-dropdown .muscle-exercise-row:last-child{padding-bottom:2px}
 @keyframes muscleDropIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+
+
+/* Interactive bodygraph and rank card */
+.bodygraph-card{padding:17px;border:1px solid #263640;border-radius:16px;background:radial-gradient(ellipse at 50% 35%,#1B3442 0,transparent 65%),#0E1821}
+.bodygraph-label{display:flex;justify-content:space-between;align-items:center;color:#A8B7C2;font-size:9px;font-weight:700;letter-spacing:.17em}
+.bodygraph-label span{color:#728693;font-size:8px;font-weight:500}
+.bodygraph-figures{display:flex;justify-content:center;max-width:500px;margin:5px auto 0}
+.bodygraph-svg{width:100%;max-height:270px;overflow:visible}
+.body-silhouette{fill:#9BAEC3;opacity:.28;stroke:#D3E0EB;stroke-width:1.2}
+.body-muscles .muscle-zone{fill:#35DDF5;fill-opacity:.22;stroke:#6CDBF2;stroke-width:1.5;cursor:pointer;transition:fill-opacity .18s,filter .18s}
+.body-muscles .muscle-zone:hover,.body-muscles .muscle-zone.active{fill:#35BDF5;fill-opacity:.85;filter:drop-shadow(0 0 5px #35DDF5AA)}
+.bodygraph-legend{display:flex;justify-content:space-between;align-items:center;padding:0 3px 13px;color:#A0ADB5;font-size:9px}
+.bodygraph-legend span{display:flex;align-items:center;gap:7px}
+.bodygraph-legend i{width:8px;height:8px;border-radius:50%;background:#35DDF5;box-shadow:0 0 8px #35DDF5}
+.bodygraph-legend small{color:#71818C;font-size:8px}
+.bodygraph-rank-pop{display:flex;align-items:center;gap:15px;padding:13px 15px;border:1px solid #35DDF544;border-radius:12px;background:linear-gradient(110deg,#12303A,#101D28)}
+.bodygraph-rank-pop>div:first-child{display:grid;gap:5px;flex:1}
+.bodygraph-rank-kicker{color:#8BA4B2;font-size:8px;letter-spacing:.16em;font-weight:700}
+.bodygraph-rank-pop>div:first-child strong{font:600 19px "Space Grotesk",sans-serif}
+.bodygraph-rank-value{display:grid;justify-items:center;gap:2px;padding:0 12px;border-left:1px solid #36505A;border-right:1px solid #36505A}
+.bodygraph-rank-value b{color:var(--cyan);font:700 24px "Space Grotesk",sans-serif}
+.bodygraph-rank-value span{color:#8BA0AC;font-size:7px;letter-spacing:.15em}
+.bodygraph-reps{display:grid;justify-items:end;color:#F1F4ED;font:600 14px "Space Grotesk",sans-serif;white-space:nowrap}
+.bodygraph-reps span{color:#8B9AA5;font:400 8px "DM Sans",sans-serif}
+@media(max-width:650px){.bodygraph-card{padding:13px}.bodygraph-svg{max-height:235px}.bodygraph-rank-pop{gap:10px;padding:11px}.bodygraph-rank-pop>div:first-child strong{font-size:16px}.bodygraph-rank-value{padding:0 9px}.bodygraph-rank-value b{font-size:21px}.bodygraph-reps{font-size:12px}}

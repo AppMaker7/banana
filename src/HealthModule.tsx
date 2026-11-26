@@ -252,7 +252,24 @@ export default function HealthModule() {
       </article>
 
       <section className="bodygraph-rankings" id="muscle-rankings">
-        <div className="bodygraph-rankings-heading"><h3>Muscle Rankings</h3><span aria-label="Ranks are based on your best set">ⓘ</span></div>
+        <div className="bodygraph-rankings-heading"><h3>Muscle Rankings</h3><span aria-label="Ranks are based on your best single set">ⓘ</span></div>
+        <div className="bodygraph-selected-summary">
+          <div><span className="bodygraph-summary-label">SELECTED MUSCLE</span><h4>{selectedMuscle}</h4></div>
+          <div className="bodygraph-summary-score"><strong>{selectedReps}</strong><span>BEST REPS IN ONE SET</span></div>
+          <div className="bodygraph-summary-rank"><span>CURRENT RANK</span><strong>{selectedRank.name}</strong></div>
+        </div>
+        <div className="bodygraph-ladder" aria-label={selectedMuscle + " rank progression"}>
+          {REP_RANKS.slice(1).map((rank, index) => {
+            const achieved = selectedReps >= rank.min;
+            const current = selectedRank.name === rank.name;
+            return <div key={rank.name} className={current ? "bodygraph-ladder-row current" : achieved ? "bodygraph-ladder-row achieved" : "bodygraph-ladder-row"}>
+              <span className="bodygraph-ladder-badge" aria-hidden="true">{index + 1}</span>
+              <div className="bodygraph-ladder-name"><strong>{rank.name}</strong><small>{rank.min}+ consecutive reps</small></div>
+              <span className="bodygraph-ladder-status">{current ? "YOUR RANK" : achieved ? "UNLOCKED" : "LOCKED"}</span>
+            </div>;
+          })}
+        </div>
+        <p className="module-footnote">Ranks use your highest logged rep count in a single set for each muscle group. Sets are not added together.</p>
         <div className="bodygraph-rankings-grid">
           {MUSCLE_GROUPS.map((muscle) => {
             const best = muscleBests[muscle] ?? 0;

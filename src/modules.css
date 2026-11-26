@@ -320,3 +320,17 @@
 .bodygraph-rankings>.module-footnote{margin:8px 0 14px}
 @media(min-width:760px){.bodygraph-ladder{max-width:760px}.bodygraph-selected-summary{max-width:760px}}
 @media(max-width:440px){.bodygraph-ladder-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:9px}.bodygraph-ladder-status{font-size:6px}.bodygraph-selected-summary{padding:14px}}
+
+
+/* BANANA Health anatomy refresh — proportional, clinical, monochrome */
+.bodygraph-screen{background:#050505!important;padding:18px 0 10px!important}
+.bodygraph-screen .body-diagram-wrap{padding:0 4px!important;background:transparent!important}
+.bodygraph-screen .anatomy-realistic{width:100%;height:auto;max-height:none;min-height:0;display:block;overflow:visible}
+.bodygraph-screen .anatomy-realistic .body-base{fill:url(#anatomySkin);stroke:#F1EBD8;stroke-width:1.15;stroke-linejoin:round;filter:drop-shadow(0 7px 12px #0009)}
+.bodygraph-screen .anatomy-realistic .body-zone path{fill:#171713;fill-opacity:.13;stroke:#746F5E;stroke-width:1.15;stroke-linejoin:round;opacity:.94;transition:fill .18s,stroke .18s,filter .18s}
+.bodygraph-screen .anatomy-realistic .body-zone:hover path,.bodygraph-screen .anatomy-realistic .body-zone:focus-visible path{fill:#FFE44D66;stroke:#FFF0A0;stroke-width:1.8;opacity:1}
+.bodygraph-screen .anatomy-realistic .body-zone.selected path{fill:#FFE44DE8;stroke:#FFF4A8;stroke-width:1.8;opacity:1;filter:drop-shadow(0 0 6px #FFE44D88)}
+.bodygraph-screen .anatomy-realistic .body-anatomy-lines{fill:none;stroke:#5F5A4C;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;opacity:.72;pointer-events:none}
+.bodygraph-screen .anatomy-realistic .body-view-labels{fill:#8D8355;font:800 10px "DM Sans",sans-serif;letter-spacing:.22em;text-anchor:middle}
+.bodygraph-screen .body-diagram-footer{margin:5px 8px 0;padding-top:10px;border-top:1px solid #29240F}
+@media(max-width:600px){.bodygraph-screen{padding:10px 0 8px!important}.bodygraph-screen .body-diagram-wrap{padding:0!important}.bodygraph-screen .anatomy-realistic{min-height:0}.bodygraph-screen .body-diagram-footer{font-size:7px}}

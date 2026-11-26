@@ -177,3 +177,22 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
  .banana-mini-player audio{height:31px}
  .mini-player-track strong{font-size:9px}
 }
+
+
+/* BANANA V3 visual refinement */
+:root{--line:#20313B;--muted:#91A0AA}
+.content{max-width:1320px;padding-top:36px}
+.greeting-row{margin-bottom:26px}
+.stat-card,.feature-card,.panel{border-color:#22343F;box-shadow:0 12px 32px #00000012}
+.feature-card{border-radius:17px}
+.panel{border-radius:15px}
+.nav-item{border-radius:11px}
+.nav-item.active{background:linear-gradient(110deg,#FFE44D12,#35DDF508);border-color:#FFE44D22}
+.brand-mark svg{filter:drop-shadow(0 0 10px #FFE44D44)}
+.footer{color:#71818C}
+::selection{background:#FFE44D44;color:#F1F4ED}
+@media(max-width:650px){
+  .content{padding-top:25px}
+  .greeting-row{margin-bottom:19px}
+  .mobile-nav{padding-top:8px;background:#08121BEF}
+}

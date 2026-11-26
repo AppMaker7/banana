@@ -26,6 +26,7 @@ export default function AssistantModule() {
   const [goal, setGoal] = useState<Goal>("balanced");
   const [project, setProject] = useState("");
   const [question, setQuestion] = useState("");
+  const [taskInput, setTaskInput] = useState("");
   const [answer, setAnswer] = useState("Tell me what you're working on, or generate a starter plan below.");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -66,17 +67,17 @@ export default function AssistantModule() {
 
   async function addCustomTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!supabase || !question.trim()) return;
+    if (!supabase || !taskInput.trim()) return;
     setBusy(true); setError("");
     try {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!userData.user) throw new Error("Log in again to save tasks.");
       const { error: insertError } = await supabase.from("tasks").insert({
-        user_id: userData.user.id, title: question.trim(), notes: project.trim() ? "Project: " + project.trim() : null, priority: "normal",
+        user_id: userData.user.id, title: taskInput.trim(), notes: project.trim() ? "Project: " + project.trim() : null, priority: "normal",
       });
       if (insertError) throw insertError;
-      setQuestion("");
+      setTaskInput("");
       setMessage("Task added to your list.");
       await loadTasks();
     } catch (caught) {
@@ -115,8 +116,8 @@ export default function AssistantModule() {
             <button className="module-small-button" type="submit">Ask</button>
           </form>
           <form className="assistant-question" onSubmit={addCustomTask}>
-            <input className="module-input" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Or type a task to save…" maxLength={160} />
-            <button className="module-primary" type="submit" disabled={busy || !question.trim()}>Add task</button>
+            <input className="module-input" value={taskInput} onChange={(event) => setTaskInput(event.target.value)} placeholder="Or type a task to save…" maxLength={160} />
+            <button className="module-primary" type="submit" disabled={busy || !taskInput.trim()}>Add task</button>
           </form>
         </article>
         <article className="module-card">

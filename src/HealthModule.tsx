@@ -234,28 +234,39 @@ export default function HealthModule() {
       </div>
       {(error || message) && <p className={error ? "module-alert error" : "module-alert"} role="status">{error || message}</p>}
 
-      <section className="health-v3-stats" aria-label="Health overview">
-        <article><span>LOGGED REPS</span><strong>{totalReps.toLocaleString()}</strong><small>Across your saved sets</small></article>
-        <article><span>SETS TRACKED</span><strong>{loggedSetCount.toLocaleString()}</strong><small>Saved workout sets</small></article>
-        <article><span>COMPLETED SESSIONS</span><strong>{completedSessions}</strong><small>In recent history</small></article>
-      </section>
+      <nav className="bodygraph-tabs" aria-label="Health sections">
+        <span className="bodygraph-tab-muted">Rank</span>
+        <span className="bodygraph-tab-active">Bodygraph</span>
+        <span className="bodygraph-tab-muted">Leagues</span>
+        <span className="bodygraph-tab-muted">Gallery</span>
+      </nav>
 
-      <article className="module-card bodygraph-v3-card">
-        <div className="module-card-head"><div><p className="eyebrow">INTERACTIVE BODY MAP</p><h3>Explore your muscle groups</h3><p>Select an area on the diagram or use the muscle buttons.</p></div><span>LIVE DATA</span></div>
-        <div className="bodygraph-v3-layout">
-          <BodyDiagram selectedMuscle={selectedMuscle} onSelect={(muscle) => { setSelectedMuscle(muscle); setFilter(muscle); }} />
-          <aside className="bodygraph-v3-detail">
-            <p className="eyebrow">SELECTED MUSCLE</p>
-            <h3>{selectedMuscle}</h3>
-            <div className="bodygraph-rank"><strong>{selectedRank.name}</strong><span>MUSCLE RANK</span></div>
-            <p className="bodygraph-total">{selectedReps.toLocaleString()} <span>best consecutive reps</span></p>
-            <div className="muscle-rank-progress" role="progressbar" aria-label={selectedMuscle + " rank progress"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(selectedRank.progress)}><i style={{ width: selectedRank.progress + "%" }} /></div>
-            <p className="muscle-rank-next">{selectedRank.next ? (selectedRank.next.min - selectedReps).toLocaleString() + " reps in one set to " + selectedRank.next.name : "Maximum rank reached"}</p>
-            <p className="module-footnote">Your rank uses your highest-rep set for this muscle group. Only your best consecutive set counts.</p>
-            <button className="module-small-button" onClick={() => setFilter(selectedMuscle)}>View {selectedMuscle.toLowerCase()} exercises</button>
-          </aside>
-        </div>
+      <article className="bodygraph-screen">
+        <BodyDiagram selectedMuscle={selectedMuscle} onSelect={(muscle) => { setSelectedMuscle(muscle); setFilter(muscle); }} />
       </article>
+
+      <article className="bodygraph-last-workout">
+        <div className="bodygraph-last-copy">
+          <p className="bodygraph-last-label">LAST WORKOUT</p>
+          <h3>{history[0]?.name ?? "Your training journey starts here"}</h3>
+          <p>{history[0] ? (history[0].completed_at ? "Workout completed · " : "Workout in progress · ") + new Date(history[0].started_at).toLocaleDateString() : "Log a workout to start tracking your improvements."}</p>
+        </div>
+        <div className="bodygraph-last-emblem" aria-hidden="true">?</div>
+        <a className="bodygraph-improvements-button" href="#muscle-rankings">SEE IMPROVEMENTS</a>
+      </article>
+
+      <section className="bodygraph-rankings" id="muscle-rankings">
+        <div className="bodygraph-rankings-heading"><h3>Muscle Rankings</h3><span aria-label="Ranks are based on your best set">ⓘ</span></div>
+        <div className="bodygraph-rankings-grid">
+          {MUSCLE_GROUPS.map((muscle) => {
+            const best = muscleBests[muscle] ?? 0;
+            const rank = getMuscleRank(best);
+            return <button type="button" key={muscle} className={selectedMuscle === muscle ? "bodygraph-rank-tile selected" : "bodygraph-rank-tile"} onClick={() => { setSelectedMuscle(muscle); setFilter(muscle); }}>
+              <span>{muscle}</span><strong>{rank.name}</strong><small>{best.toLocaleString()} best reps</small>
+            </button>;
+          })}
+        </div>
+      </section>
 
       <div className="module-grid two">
         <article className="module-card">

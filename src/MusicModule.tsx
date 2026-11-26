@@ -128,10 +128,11 @@ export default function MusicModule() {
         const parsed = new URL(value);
         if (parsed.hostname !== "open.spotify.com") throw new Error("Use a Spotify share link from open.spotify.com.");
         const parts = parsed.pathname.split("/").filter(Boolean);
-        const offset = parts[0] === "embed" ? 1 : 0;
-        type = parts[offset] ?? "";
-        id = parts[offset + 1] ?? "";
-        if (!["track", "album", "playlist", "artist", "show", "episode"].includes(type) || !/^[A-Za-z0-9]+$/.test(id)) {
+        const supportedTypes = ["track", "album", "playlist", "artist", "show", "episode"];
+        const typeIndex = parts.findIndex((part) => supportedTypes.includes(part));
+        type = typeIndex >= 0 ? parts[typeIndex] : "";
+        id = typeIndex >= 0 ? parts[typeIndex + 1] ?? "" : "";
+        if (!supportedTypes.includes(type) || !/^[A-Za-z0-9]+$/.test(id)) {
           throw new Error("Paste a Spotify track, album, artist, show, or playlist link.");
         }
       } catch (caught) {

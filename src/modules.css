@@ -187,3 +187,9 @@
   .spotify-v3-form{grid-template-columns:1fr}
   .spotify-v3-form .module-primary{width:100%}
 }
+
+/* Rep-based muscle progression ranks */
+.bodygraph-rank strong{font-size:clamp(22px,4vw,32px);letter-spacing:-.04em}
+.muscle-rank-progress{height:7px;overflow:hidden;border-radius:20px;background:#263640;margin:2px 0 0}
+.muscle-rank-progress i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#35DDF5,#FFE44D);transition:width .25s ease}
+.muscle-rank-next{margin:0 0 12px;color:#B7C6CC;font-size:9px}

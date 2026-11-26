@@ -27,7 +27,6 @@ const navItems: { name: Tab; icon: string }[] = [
 function App() {
   const [active, setActive] = useState<Tab>("Home");
   const [playing, setPlaying] = useState(false);
-  const [focusEnabled, setFocusEnabled] = useState(false);
   const [workoutPreview, setWorkoutPreview] = useState(false);
   const [selectedMuscle, setSelectedMuscle] = useState("");
   const [expandedMuscle, setExpandedMuscle] = useState("");
@@ -283,11 +282,10 @@ function App() {
             <MusicModule />
           ) : (
             <section className="placeholder-panel">
-              <div className="placeholder-symbol">{active === "Focus" ? "◷" : "⚙"}</div>
-              <p className="eyebrow">{active.toUpperCase()} MODULE</p>
-              <h2>{active === "Focus" ? "Make focus work for you." : "Your setup, your rules."}</h2>
-              <p>{active === "Focus" ? "Choose apps, complete a movement challenge, and earn a timed unlock. Essential apps always stay available." : "Themes, sounds, notifications, and personal preferences will be managed here."}</p>
-              {active === "Focus" && <button className={focusEnabled ? "card-button cyan-button" : "card-button yellow-button"} onClick={() => setFocusEnabled(!focusEnabled)}>{focusEnabled ? "Focus preview enabled" : "Preview Focus Mode"} <span>→</span></button>}
+              <div className="placeholder-symbol">⚙</div>
+              <p className="eyebrow">SETTINGS MODULE</p>
+              <h2>Your setup, your rules.</h2>
+              <p>Themes, sounds, notifications, privacy, and account preferences will be managed here.</p>
               <button className="back-link" onClick={() => setActive("Home")}>← Back to dashboard</button>
             </section>
           )}

@@ -193,3 +193,30 @@
 .muscle-rank-progress{height:7px;overflow:hidden;border-radius:20px;background:#263640;margin:2px 0 0}
 .muscle-rank-progress i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#35DDF5,#FFE44D);transition:width .25s ease}
 .muscle-rank-next{margin:0 0 12px;color:#B7C6CC;font-size:9px}
+
+
+/* Bodygraph Pro — anatomical rank-screen treatment */
+.bodygraph-pro{padding:clamp(10px,2vw,20px);border-color:#29243B;background:linear-gradient(180deg,#100D1B,#0D0A16)}
+.bodygraph-pro .body-diagram-legend{justify-content:space-evenly;margin:2px 0 10px;color:#A6A2B8;font-size:9px;letter-spacing:.13em}
+.body-diagram-legend span{display:flex;align-items:center;gap:7px}
+.body-diagram-legend i,.body-diagram-active i{width:7px;height:7px;display:inline-block;border-radius:50%;background:#58B8F4;box-shadow:0 0 9px #58B8F488}
+.body-diagram-pro{width:100%;max-height:none;min-height:280px;overflow:visible}
+.body-diagram-pro .body-base{fill:url(#anatomySkin);stroke:#F0F1FF;stroke-width:1.5;stroke-linejoin:round;filter:drop-shadow(0 5px 12px #0005)}
+.body-diagram-pro .body-anatomy-lines{fill:none;stroke:#F8F8FF;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.86;pointer-events:none}
+.body-diagram-pro .body-zone{cursor:pointer;outline:none}
+.body-diagram-pro .body-zone path{fill:#52B9F522;stroke:#F4F5FF;stroke-width:1.5;stroke-linejoin:round;opacity:.78;transition:fill .16s,stroke .16s,opacity .16s,filter .16s}
+.body-diagram-pro .body-zone:hover path,.body-diagram-pro .body-zone:focus-visible path{fill:#55BDF477;stroke:#FFFFFF;stroke-width:2.2;opacity:1}
+.body-diagram-pro .body-zone.selected path{fill:#52B9F4D9;stroke:#BDEBFF;stroke-width:2.4;opacity:1;filter:drop-shadow(0 0 6px #52B9F4A8)}
+.body-view-labels{fill:#9A96AD;font:700 10px "DM Sans",sans-serif;letter-spacing:.2em;text-anchor:middle}
+.body-diagram-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:4px;color:#88849C;font-size:8px;font-weight:800;letter-spacing:.13em}
+.body-diagram-active{display:flex;align-items:center;gap:7px;color:#65C5FA}
+.bodygraph-pro .body-muscle-chips{justify-content:center;gap:7px;margin-top:13px}
+.bodygraph-pro .body-muscle-chip{padding:8px 12px;border-color:#343044;background:#191526;color:#C4C0D1;font-size:9px;font-weight:700}
+.bodygraph-pro .body-muscle-chip.selected{border-color:#58B8F4;background:#58B8F422;color:#73C9FF;box-shadow:0 0 0 1px #58B8F422}
+@media(max-width:600px){
+ .body-diagram-pro{min-height:220px}
+ .bodygraph-pro{padding:8px}
+ .body-diagram-legend{font-size:7px}
+ .body-diagram-footer{font-size:7px}
+ .bodygraph-pro .body-muscle-chip{padding:7px 9px}
+}

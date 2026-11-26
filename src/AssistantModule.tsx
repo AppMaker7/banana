@@ -13,15 +13,6 @@ const taskTemplates: Record<Goal, string[]> = {
   project: ["Write down the next smallest project step", "Work on that step for one focused block", "Review what changed and note the next action"],
 };
 
-function localReply(question: string, taskCount: number) {
-  const q = question.toLowerCase();
-  if (q.includes("workout") || q.includes("exercise")) return "Start with a manageable plan, use movements you can do with good form, and leave room for rest. BANANA Health can save the plan and track each set.";
-  if (q.includes("focus") || q.includes("study")) return "Try one 25-minute focus block, silence distractions you control, then take a short break. You can start and save that block in Focus Mode.";
-  if (q.includes("project")) return "Break the project into one small next action, one check-in, and one finish condition. Add the actions below with a project name so they stay grouped.";
-  if (q.includes("task") || q.includes("today")) return taskCount ? "You have " + taskCount + " open tasks saved. Pick the most important one and make the first step small enough to start." : "You don't have any open tasks saved yet. Choose a goal below and I'll create a starter list.";
-  return "I can help organize a day, outline a project, or suggest a balanced workout structure. Try asking about focus, tasks, projects, or workouts. This version uses built-in guidance; a secure AI model connection isn't configured yet.";
-}
-
 export default function AssistantModule() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [plans, setPlans] = useState<SavedPlan[]>([]);
@@ -127,27 +118,39 @@ export default function AssistantModule() {
     else await loadTasks();
   }
 
-  function askAssistant(event: FormEvent<HTMLFormElement>) {
+  async function askAssistant(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!question.trim()) return;
-    setAnswer(localReply(question, openCount));
+    if (!supabase || !question.trim()) return;
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const { data, error: aiError } = await supabase.functions.invoke("banana-ai", {
+        body: { message: question.trim(), context: { openTasks: openCount, savedWorkoutPlans: plans.length } },
+      });
+      if (aiError) throw aiError;
+      if (typeof data?.reply !== "string" || !data.reply.trim()) {
+        throw new Error(data?.error || "BANANA AI didn't return a response.");
+      }
+      setAnswer(data.reply);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "BANANA AI isn't connected yet. Check the server setup.");
+    } finally { setBusy(false); }
   }
 
   return (
     <section className="banana-module">
       <div className="module-heading">
-        <div><p className="eyebrow">PHASE 4 · BANANA AI</p><h2>Your planning assistant.</h2><p>Turn a goal into smaller actions, keep projects organized, and get a useful next step.</p></div>
-        <span className="module-pill">BETA</span>
+        <div><p className="eyebrow">V3 · ADVANCED AI</p><h2>Your intelligent workspace.</h2><p>Ask open-ended questions, plan your next move, and build routines with context from BANANA.</p></div>
+        <span className="module-pill">AI CONNECTOR</span>
       </div>
-      <div className="module-alert assistant-notice">AI connection isn't configured yet. This build includes a local guided planner and task manager; it does not send your information to an AI service.</div>
+      <div className="module-alert assistant-notice">Messages are sent to BANANA's secure server function for an AI response. Don't include passwords or private information.</div>
       {(error || message) && <p className={error ? "module-alert error" : "module-alert"} role="status">{error || message}</p>}
       <div className="module-grid two">
         <article className="module-card assistant-chat">
-          <div className="module-card-head"><div><p className="eyebrow">ASK BANANA</p><h3>What should I do next?</h3></div><span>01</span></div>
+          <div className="module-card-head"><div><p className="eyebrow">BANANA INTELLIGENCE</p><h3>Ask anything.</h3></div><span>01</span></div>
           <div className="assistant-answer">{answer}</div>
           <form className="assistant-question" onSubmit={askAssistant}>
-            <input className="module-input" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask about focus, tasks, workouts…" maxLength={300} />
-            <button className="module-small-button" type="submit">Ask</button>
+            <input className="module-input" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask BANANA to help with anything…" maxLength={2000} />
+            <button className="module-small-button" type="submit" disabled={busy || !question.trim()}>{busy ? "Thinking…" : "Ask AI"}</button>
           </form>
           <form className="assistant-question" onSubmit={addCustomTask}>
             <input className="module-input" value={taskInput} onChange={(event) => setTaskInput(event.target.value)} placeholder="Or type a task to save…" maxLength={160} />

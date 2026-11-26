@@ -220,3 +220,48 @@
  .body-diagram-footer{font-size:7px}
  .bodygraph-pro .body-muscle-chip{padding:7px 9px}
 }
+
+
+/* Reference-matched Bodygraph screen */
+.health-module{gap:15px}
+.bodygraph-tabs{display:flex;align-items:center;gap:clamp(20px,5vw,42px);overflow-x:auto;white-space:nowrap;padding:2px 0 8px;border-bottom:1px solid #272236}
+.bodygraph-tabs span{font-size:clamp(15px,3.2vw,23px);font-weight:500;letter-spacing:-.035em}
+.bodygraph-tab-muted{color:#A6A1B5}
+.bodygraph-tab-active{color:#58B9F5;font-weight:750!important}
+.bodygraph-screen{margin:0 -2px;padding:8px 0 2px;border:0;background:#0D0917;overflow:hidden}
+.bodygraph-screen .body-diagram-wrap{padding:0;border:0;border-radius:0;background:transparent}
+.bodygraph-screen .body-diagram-pro{width:100%;height:auto;max-height:none;min-height:0;display:block}
+.bodygraph-screen .body-diagram-pro .body-base{fill:#D5D5E8;stroke:#E4E5F4;stroke-width:1.8;filter:none}
+.bodygraph-screen .body-diagram-pro .body-anatomy-lines{stroke:#F6F5FF;stroke-width:2.6;opacity:.94}
+.bodygraph-screen .body-diagram-pro .body-zone path{fill:#58B9F500;stroke:#F2F1FC;stroke-width:1.9;opacity:.95}
+.bodygraph-screen .body-diagram-pro .body-zone:hover path,.bodygraph-screen .body-diagram-pro .body-zone:focus-visible path{fill:#55B8F466;stroke:#FFFFFF;stroke-width:2.5}
+.bodygraph-screen .body-diagram-pro .body-zone.selected path{fill:#55B9F5E8;stroke:#BFEAFF;stroke-width:2.4;filter:drop-shadow(0 0 5px #55B9F566)}
+.bodygraph-last-workout{display:grid;grid-template-columns:minmax(0,1fr) 104px;gap:8px 14px;align-items:center;padding:24px 20px 20px;border:1px solid #201B30;border-radius:24px;background:#191525;box-shadow:0 10px 28px #0002}
+.bodygraph-last-copy{min-width:0}
+.bodygraph-last-label{margin:0 0 10px;color:#58B9F5;font-size:clamp(11px,2vw,14px);font-weight:800;letter-spacing:.08em}
+.bodygraph-last-copy h3{margin:0;color:#F5F3FA;font-size:clamp(20px,4vw,30px);font-weight:750;line-height:1.28;letter-spacing:-.035em}
+.bodygraph-last-copy p:last-child{margin:7px 0 0;color:#A8A3B5;font-size:11px;line-height:1.5}
+.bodygraph-last-emblem{width:88px;height:88px;display:grid;place-items:center;justify-self:end;border:8px solid transparent;border-radius:23px;background:linear-gradient(#C7D9F4,#C7D9F4) padding-box,conic-gradient(from 20deg,#6AE8D6,#FFE04D,#FF5A9D,#7D68FF,#6AE8D6) border-box;color:#7D8DA9;font-size:48px;font-weight:800;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.bodygraph-improvements-button{grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:58px;margin-top:9px;border:1px solid #7ACFFF;border-radius:25px;background:#58B9F5;box-shadow:0 5px 0 #2587C6;color:#081426;text-decoration:none;font-size:clamp(13px,2.4vw,17px);font-weight:800;letter-spacing:.015em}
+.bodygraph-improvements-button:active{transform:translateY(2px);box-shadow:0 3px 0 #2587C6}
+.bodygraph-rankings{padding:0 2px}
+.bodygraph-rankings-heading{display:flex;align-items:center;gap:10px;margin:8px 0 13px}
+.bodygraph-rankings-heading h3{margin:0;color:#F5F3FA;font-size:clamp(22px,4vw,30px);font-weight:750;letter-spacing:-.04em}
+.bodygraph-rankings-heading span{color:#A7A2B7;font-size:18px}
+.bodygraph-rankings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.bodygraph-rank-tile{display:grid;gap:5px;text-align:left;padding:13px;border:1px solid #29243B;border-radius:13px;background:#191525;color:#F2F0F8;cursor:pointer}
+.bodygraph-rank-tile span{color:#A7A2B7;font-size:10px;font-weight:700}
+.bodygraph-rank-tile strong{color:#58B9F5;font-size:15px}
+.bodygraph-rank-tile small{color:#A7A2B7;font-size:9px}
+.bodygraph-rank-tile.selected{border-color:#58B9F5;background:#1A2033;box-shadow:0 0 0 1px #58B9F522}
+@media(min-width:760px){
+ .bodygraph-screen{padding:8px 5%}
+ .bodygraph-last-workout{grid-template-columns:minmax(0,1fr) 110px;padding:26px 28px}
+ .bodygraph-rankings-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:440px){
+ .bodygraph-last-workout{grid-template-columns:minmax(0,1fr) 76px;padding:20px 15px 17px;border-radius:20px}
+ .bodygraph-last-emblem{width:68px;height:68px;font-size:38px;border-width:6px}
+ .bodygraph-improvements-button{min-height:52px;border-radius:20px}
+ .bodygraph-rankings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

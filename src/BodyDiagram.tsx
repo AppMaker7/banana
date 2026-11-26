@@ -2,8 +2,6 @@ import type { KeyboardEvent } from "react";
 
 type Props = { selectedMuscle: string; onSelect: (muscle: string) => void };
 
-const groups = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Core", "Legs"];
-
 export default function BodyDiagram({ selectedMuscle, onSelect }: Props) {
   const keyChoose = (event: KeyboardEvent<SVGGElement>, muscle: string) => {
     if (event.key === "Enter" || event.key === " ") {

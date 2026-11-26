@@ -184,32 +184,40 @@ function App() {
                   <span className="workout-tag">BY TOTAL REPS</span>
                 </div>
                 <p className="muscle-helper">Tap a muscle group to see its exercises and log your reps. Rankings update automatically.</p>
-                <div className="muscle-ranking-layout">
-                  <div className="muscle-list">
-                    {muscleData.map((group) => (
-                      <button key={group.name} className={selectedMuscle === group.name ? "muscle-rank-row selected" : "muscle-rank-row"} onClick={() => setSelectedMuscle(group.name)}>
-                        <span className="muscle-rank-number">#{[...muscleData].sort((x,y) => muscleTotal(y.name)-muscleTotal(x.name)).findIndex((item) => item.name === group.name) + 1}</span>
-                        <span className="muscle-rank-name">{group.name}</span>
-                        <strong>{muscleTotal(group.name).toLocaleString()} <small>reps</small></strong>
-                        <span className="muscle-chevron">›</span>
-                      </button>
-                    ))}
-                  </div>
-                  <article className="muscle-exercise-panel">
-                    <div className="muscle-exercise-heading">
-                      <div><p className="eyebrow">SELECTED MUSCLE</p><h3>{selectedMuscle}</h3></div>
-                      <strong>{muscleTotal(selectedMuscle).toLocaleString()} <small>total reps</small></strong>
-                    </div>
-                    <p className="muscle-helper">Exercises for {selectedMuscle.toLowerCase()}</p>
-                    {selectedGroup.exercises.map((exercise) => {
-                      const key = selectedMuscle + ":" + exercise;
-                      return <div className="muscle-exercise-row" key={key}>
-                        <div className="muscle-exercise-info"><strong>{exercise}</strong><small>{(repTotals[key] ?? 0).toLocaleString()} reps logged</small></div>
-                        <input aria-label={"Reps for " + exercise} type="number" min="1" inputMode="numeric" placeholder="Reps" value={repInputs[key] ?? ""} onChange={(event) => setRepInputs((current) => ({...current, [key]: event.target.value}))} />
-                        <button onClick={() => logExerciseReps(selectedMuscle, exercise)} disabled={!Number(repInputs[key] ?? "0")}>Add</button>
-                      </div>;
-                    })}
-                  </article>
+                <div className="muscle-accordion">
+                  {muscleData.map((group) => {
+                    const isOpen = selectedMuscle === group.name;
+                    return (
+                      <div className={isOpen ? "muscle-accordion-item expanded" : "muscle-accordion-item"} key={group.name}>
+                        <button
+                          className={isOpen ? "muscle-rank-row selected" : "muscle-rank-row"}
+                          aria-expanded={isOpen}
+                          onClick={() => setSelectedMuscle(isOpen ? "" : group.name)}
+                        >
+                          <span className="muscle-rank-number">#{[...muscleData].sort((x,y) => muscleTotal(y.name)-muscleTotal(x.name)).findIndex((item) => item.name === group.name) + 1}</span>
+                          <span className="muscle-rank-name">{group.name}</span>
+                          <strong>{muscleTotal(group.name).toLocaleString()} <small>reps</small></strong>
+                          <span className="muscle-chevron">{isOpen ? "⌄" : "›"}</span>
+                        </button>
+                        {isOpen && (
+                          <div className="muscle-dropdown">
+                            <div className="muscle-exercise-heading">
+                              <div><p className="eyebrow">EXERCISES</p><h3>{group.name}</h3></div>
+                              <strong>{muscleTotal(group.name).toLocaleString()} <small>total reps</small></strong>
+                            </div>
+                            {group.exercises.map((exercise) => {
+                              const key = group.name + ":" + exercise;
+                              return <div className="muscle-exercise-row" key={key}>
+                                <div className="muscle-exercise-info"><strong>{exercise}</strong><small>{(repTotals[key] ?? 0).toLocaleString()} reps logged</small></div>
+                                <input aria-label={"Reps for " + exercise} type="number" min="1" inputMode="numeric" placeholder="Reps" value={repInputs[key] ?? ""} onChange={(event) => setRepInputs((current) => ({...current, [key]: event.target.value}))} />
+                                <button onClick={() => logExerciseReps(group.name, exercise)} disabled={!Number(repInputs[key] ?? "0")}>Add</button>
+                              </div>;
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
 

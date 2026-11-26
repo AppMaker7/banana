@@ -134,10 +134,22 @@ create policy "settings_manage_own" on public.user_settings for all to authentic
 create policy "tasks_manage_own" on public.tasks for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 create policy "workout_plans_manage_own" on public.workout_plans for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 create policy "workout_sessions_manage_own" on public.workout_sessions for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "workout_sets_manage_own" on public.workout_sets for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+create policy "workout_sets_manage_own" on public.workout_sets for all to authenticated
+using (user_id = (select auth.uid()) and exists (
+  select 1 from public.workout_sessions s where s.id = workout_sets.session_id and s.user_id = (select auth.uid())
+))
+with check (user_id = (select auth.uid()) and exists (
+  select 1 from public.workout_sessions s where s.id = workout_sets.session_id and s.user_id = (select auth.uid())
+));
 create policy "focus_sessions_manage_own" on public.focus_sessions for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 create policy "recovery_logs_manage_own" on public.recovery_logs for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 create policy "user_achievements_manage_own" on public.user_achievements for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 create policy "playlists_manage_own" on public.playlists for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "playlist_tracks_manage_own" on public.playlist_tracks for all to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+create policy "playlist_tracks_manage_own" on public.playlist_tracks for all to authenticated
+using (user_id = (select auth.uid()) and exists (
+  select 1 from public.playlists p where p.id = playlist_tracks.playlist_id and p.user_id = (select auth.uid())
+))
+with check (user_id = (select auth.uid()) and exists (
+  select 1 from public.playlists p where p.id = playlist_tracks.playlist_id and p.user_id = (select auth.uid())
+));
 create policy "achievements_read_authenticated" on public.achievements for select to authenticated using (true);

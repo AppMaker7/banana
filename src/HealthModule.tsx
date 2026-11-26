@@ -71,7 +71,7 @@ export default function HealthModule() {
 
   const totalReps = Object.values(muscleTotals).reduce((sum, value) => sum + value, 0);
   const rankedMuscles = Object.entries(muscleTotals).sort((a, b) => b[1] - a[1]);
-  const selectedRank = Math.max(1, rankedMuscles.findIndex(([name]) => name === selectedMuscle) + 1);
+  const selectedRank = rankedMuscles.findIndex(([name]) => name === selectedMuscle) + 1;
   const completedSessions = history.filter((session) => Boolean(session.completed_at)).length;
 
   const filteredLibrary = useMemo(
@@ -218,7 +218,7 @@ export default function HealthModule() {
           <aside className="bodygraph-v3-detail">
             <p className="eyebrow">SELECTED MUSCLE</p>
             <h3>{selectedMuscle}</h3>
-            <div className="bodygraph-rank"><strong>#{selectedRank}</strong><span>BY TOTAL REPS</span></div>
+            <div className="bodygraph-rank"><strong>{selectedRank ? "#" + selectedRank : "—"}</strong><span>BY TOTAL REPS</span></div>
             <p className="bodygraph-total">{(muscleTotals[selectedMuscle] ?? 0).toLocaleString()} <span>reps logged</span></p>
             <p className="module-footnote">Rankings use the reps saved in your workout sets. Log sets in a workout to update this map.</p>
             <button className="module-small-button" onClick={() => setFilter(selectedMuscle)}>View {selectedMuscle.toLowerCase()} exercises</button>

@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 
 type Task = { id: string; title: string; notes: string | null; priority: string; completed_at: string | null; created_at: string };
+type SavedPlan = { id: string; name: string; plan_data: { exercises?: { name: string; muscle: string; hint: string }[] } };
 type Goal = "balanced" | "school" | "fitness" | "project";
 
 const taskTemplates: Record<Goal, string[]> = {
@@ -23,6 +24,7 @@ function localReply(question: string, taskCount: number) {
 
 export default function AssistantModule() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [plans, setPlans] = useState<SavedPlan[]>([]);
   const [goal, setGoal] = useState<Goal>("balanced");
   const [project, setProject] = useState("");
   const [question, setQuestion] = useState("");
@@ -34,11 +36,14 @@ export default function AssistantModule() {
 
   async function loadTasks() {
     if (!supabase) return;
-    const { data, error: loadError } = await supabase.from("tasks")
-      .select("id,title,notes,priority,completed_at,created_at")
-      .order("created_at", { ascending: false }).limit(40);
+    const [{ data, error: loadError }, { data: planData, error: planError }] = await Promise.all([
+      supabase.from("tasks").select("id,title,notes,priority,completed_at,created_at").order("created_at", { ascending: false }).limit(40),
+      supabase.from("workout_plans").select("id,name,plan_data").eq("is_archived", false).order("created_at", { ascending: false }).limit(6),
+    ]);
     if (loadError) setError(loadError.message);
+    if (planError) setError(planError.message);
     setTasks((data ?? []) as Task[]);
+    setPlans((planData ?? []) as SavedPlan[]);
   }
 
   useEffect(() => { void loadTasks(); }, []);
@@ -62,6 +67,35 @@ export default function AssistantModule() {
       await loadTasks();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Couldn't create your task list.");
+    } finally { setBusy(false); }
+  }
+
+  async function generateWorkoutPlan() {
+    if (!supabase) return;
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!userData.user) throw new Error("Log in again to save a workout routine.");
+      const exercises = [
+        { name: "Push-ups", muscle: "Chest", hint: "2 comfortable sets · 8–12 reps" },
+        { name: "One-arm dumbbell row", muscle: "Back", hint: "2 comfortable sets · 8–12 reps each side" },
+        { name: "Dumbbell shoulder press", muscle: "Shoulders", hint: "2 comfortable sets · 8–12 reps" },
+        { name: "Dumbbell curls", muscle: "Biceps", hint: "2 comfortable sets · 8–12 reps" },
+        { name: "Dead bugs", muscle: "Core", hint: "2 controlled sets · 6–10 reps each side" },
+        { name: "Bodyweight squats", muscle: "Legs", hint: "2 comfortable sets · 8–12 reps" },
+      ];
+      const { error: saveError } = await supabase.from("workout_plans").insert({
+        user_id: userData.user.id,
+        name: "BANANA Balanced Starter Routine",
+        description: "A balanced starter template. Adjust to your comfort and leave room for recovery.",
+        plan_data: { exercises, guidance: "Use comfortable effort, focus on good form, and allow recovery days between strength sessions." },
+      });
+      if (saveError) throw saveError;
+      setMessage("Starter workout routine saved to Health.");
+      await loadTasks();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Couldn't create the workout routine.");
     } finally { setBusy(false); }
   }
 
@@ -128,6 +162,11 @@ export default function AssistantModule() {
           <button className="module-primary" disabled={busy} onClick={() => void generateTasks()}>{busy ? "Creating…" : "Create my tasks"}</button>
         </article>
       </div>
+      <article className="module-card">
+        <div className="module-card-head"><div><p className="eyebrow">WORKOUT ROUTINE BUILDER</p><h3>Generate a balanced routine</h3><p>Creates a starter plan with comfortable sets and recovery guidance.</p></div><span>{plans.length} SAVED</span></div>
+        <button className="module-primary" disabled={busy} onClick={() => void generateWorkoutPlan()}>{busy ? "Creating…" : "Create workout routine"}</button>
+        {plans.map((plan) => <div className="module-list-row" key={plan.id}><div><strong>{plan.name}</strong><small>{plan.plan_data?.exercises?.length ?? 0} exercises · Available in Health</small></div><span className="module-status">SAVED</span></div>)}
+      </article>
       <article className="module-card">
         <div className="module-card-head"><div><p className="eyebrow">YOUR TASKS & PROJECTS</p><h3>Task board</h3></div><span>{openCount} OPEN</span></div>
         {tasks.length === 0 ? <p className="module-empty">Your tasks will appear here after you create a list.</p> : tasks.map((task) => <label className={task.completed_at ? "assistant-task completed" : "assistant-task"} key={task.id}><input type="checkbox" checked={Boolean(task.completed_at)} onChange={() => void toggleTask(task)} /><span><strong>{task.title}</strong><small>{task.notes || "Personal task"} · {task.completed_at ? "Completed" : "Open"}</small></span></label>)}

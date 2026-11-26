@@ -96,7 +96,7 @@ function App() {
                 <article className="panel music-panel">
                   <div className="panel-heading"><div><p className="eyebrow">WORKOUT SOUNDTRACK</p><h2>Keep the energy.</h2></div><span className="music-wave">▂ ▅ ▃ ▆ ▄</span></div>
                   <div className="track-row"><div className="album-art"><span>♫</span></div><div className="track-copy"><strong>Workout mix</strong><span>Your playlist · Ready when you are</span></div><button className="play-button" onClick={() => setActive("Music")} aria-label="Open music">↗</button></div>
-                  <div className="music-note">"OPEN BANANA MUSIC FOR SPOTIFY AND YOUR PLAYLISTS"</div>
+                  <div className="music-note">OPEN BANANA MUSIC FOR SPOTIFY AND YOUR PLAYLISTS</div>
                 </article>
               </section>
             </>

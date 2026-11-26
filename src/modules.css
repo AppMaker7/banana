@@ -403,3 +403,72 @@
   .anatomy-reference .fitness-figures{gap:18px}
   .anatomy-reference .fitness-figure{width:min(42%,145px);max-height:285px}
 }
+
+
+/* Unified rank-centered Health update */
+.rank-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:5px;border:1px solid #273842;border-radius:12px;background:#0B151D}
+.rank-tabs button{min-height:38px;border:0;border-radius:8px;background:transparent;color:#8B9AA4;font:700 10px "DM Sans",sans-serif;cursor:pointer}
+.rank-tabs button.bodygraph-tab-active{background:#FFE44D;color:#151A1D}
+.rank-center{display:grid;gap:16px}
+.rank-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:22px;align-items:center;overflow:hidden;padding:24px;border:1px solid #384039;border-radius:17px;background:radial-gradient(ellipse at 82% 25%,#FFE44D19,transparent 35%),linear-gradient(130deg,#1A282E,#0D171F)}
+.rank-overline{color:#9AAAB2;font-size:8px;font-weight:800;letter-spacing:.17em}
+.rank-hero h2{margin:8px 0;font:600 clamp(24px,4vw,34px)/1.05 "Space Grotesk",sans-serif;letter-spacing:-.05em}
+.rank-hero-copy>p,.rank-ai-card>p{max-width:470px;margin:0;color:#9BAAB2;font-size:10px;line-height:1.65}
+.rank-hero-current{display:flex;align-items:center;gap:13px;margin-top:19px}
+.rank-hero-current>div:last-child{display:grid;gap:5px}
+.rank-hero-current>div:last-child strong{font:700 25px "Space Grotesk",sans-serif;color:#FFE44D}
+.rank-hero-current small{color:#9AAAB2;font-size:9px}
+.rank-hero-progress{padding:16px;border:1px solid #34434D;border-radius:12px;background:#0A141C}
+.rank-hero-progress>div:first-child{display:flex;justify-content:space-between;gap:8px;color:#9AAAB2;font-size:8px;font-weight:700;letter-spacing:.1em}
+.rank-hero-progress>div:first-child b{color:#FFE44D}
+.rank-progress-track{height:7px;margin:12px 0 9px;overflow:hidden;border-radius:9px;background:#293640}
+.rank-progress-track i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#C69A43,#FFE44D);transition:width .35s}
+.rank-hero-progress>small{color:#85959E;font-size:8px}
+.rank-emblem{position:relative;display:grid;place-items:center;flex:0 0 43px;width:43px;height:48px;color:#B77A50;filter:drop-shadow(0 4px 8px #0005)}
+.rank-emblem svg{position:absolute;inset:0;width:100%;height:100%}
+.rank-emblem>b{position:relative;z-index:1;color:#111820;font:800 12px "Space Grotesk",sans-serif}
+.rank-emblem-large{flex-basis:65px;width:65px;height:73px}
+.rank-emblem-large>b{font-size:17px}
+.rank-emblem-0{color:#A77B52}.rank-emblem-1{color:#BD8053}.rank-emblem-2{color:#B9C3CC}.rank-emblem-3{color:#E8BF48}.rank-emblem-4{color:#70C9BD}.rank-emblem-5{color:#70B8E9}.rank-emblem-6{color:#AC8AE8}.rank-emblem-7{color:#D97B5D}.rank-emblem-8{color:#F0D889}
+.rank-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.rank-stat-grid article{display:grid;gap:6px;padding:15px;border:1px solid #24343E;border-radius:12px;background:#101C25}
+.rank-stat-grid article>span{color:#8999A4;font-size:7px;font-weight:800;letter-spacing:.13em}
+.rank-stat-grid article>strong{font:600 25px "Space Grotesk",sans-serif;color:#F1F4ED}
+.rank-stat-grid article>small{color:#81919B;font-size:8px}
+.rank-section{display:grid;gap:11px}
+.rank-section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.rank-section-heading h3,.rank-ai-top h3{margin:4px 0 0;font:600 19px "Space Grotesk",sans-serif;letter-spacing:-.03em}
+.rank-section-heading>span{color:#82919C;font-size:8px;letter-spacing:.13em}
+.rank-muscle-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.rank-muscle-card{display:flex;align-items:center;gap:10px;min-width:0;padding:11px;border:1px solid #263640;border-radius:11px;background:#101B24;color:#F1F4ED;text-align:left;cursor:pointer;transition:border-color .18s,background .18s}
+.rank-muscle-card.selected{border-color:#FFE44D88;background:#FFE44D0C}
+.rank-muscle-card>span:nth-child(2),.rank-exercise-row>span:nth-child(2){display:grid;gap:4px;flex:1;min-width:0}
+.rank-muscle-card strong,.rank-exercise-row strong{font-size:10px}
+.rank-muscle-card small,.rank-exercise-row small{color:#82919C;font-size:8px}
+.rank-muscle-card>b,.rank-exercise-row>b{color:#FFE44D;font-size:8px;white-space:nowrap}
+.rank-exercise-list{display:grid;border:1px solid #24343E;border-radius:12px;background:#101B24}
+.rank-exercise-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid #24343E}
+.rank-exercise-row:first-child{border-top:0}
+.rank-empty{padding:18px;border:1px dashed #34434D;border-radius:11px;color:#8B9AA4;font-size:10px;line-height:1.6}
+.rank-ai-card{display:grid;gap:10px;padding:17px;border:1px solid #3B3B2D;border-radius:14px;background:radial-gradient(ellipse at 90% 0,#FFE44D14,transparent 45%),#111C23}
+.rank-ai-top{display:flex;align-items:center;gap:10px}
+.rank-ai-top>div{flex:1}
+.rank-ai-icon{display:grid;place-items:center;width:34px;height:34px;border:1px solid #FFE44D55;border-radius:10px;background:#FFE44D12;color:#FFE44D;font-size:18px}
+.rank-ai-tag{padding:5px 8px;border:1px solid #FFE44D44;border-radius:20px;color:#FFE44D;font-size:8px;font-weight:800;letter-spacing:.12em}
+.rank-ai-button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 13px;border:0;border-radius:8px;background:#FFE44D;color:#151A1D;font-size:10px;font-weight:800;cursor:pointer}
+.rank-ai-button:disabled{opacity:.55;cursor:wait}
+.rank-ai-response{padding:13px;border:1px solid #34434D;border-radius:9px;background:#0A141C;color:#D5E0E4;font-size:10px;line-height:1.7;white-space:pre-wrap}
+.rank-feature-panel{display:grid;gap:12px;padding:22px;border:1px solid #273842;border-radius:15px;background:linear-gradient(145deg,#14232D,#0B151D)}
+.rank-feature-kicker{color:#FFE44D;font-size:8px;font-weight:800;letter-spacing:.17em}
+.rank-feature-panel h2{margin:0;font:600 27px "Space Grotesk",sans-serif}
+.rank-feature-panel>p{max-width:620px;margin:0;color:#9BAAB2;font-size:10px;line-height:1.7}
+.rank-league-current{display:grid;justify-items:start;gap:6px;width:max-content;max-width:100%;padding:16px;border:1px solid #FFE44D44;border-radius:12px;background:#FFE44D0B}
+.rank-league-current span{color:#9AAAB2;font-size:8px;letter-spacing:.14em}
+.rank-league-current strong{color:#FFE44D;font:700 26px "Space Grotesk",sans-serif}
+.rank-league-current small{color:#9AAAB2;font-size:9px}
+.rank-gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.rank-gallery-item{display:grid;justify-items:center;gap:7px;padding:14px 8px;border:1px solid #273842;border-radius:11px;background:#0C1720}
+.rank-gallery-item .rank-emblem{width:48px;height:54px}
+.rank-gallery-item strong{font-size:10px}
+.rank-gallery-item small{color:#82919C;font-size:8px}
+@media(max-width:650px){.rank-hero{grid-template-columns:1fr;padding:18px;gap:16px}.rank-stat-grid{gap:7px}.rank-stat-grid article{padding:11px 9px}.rank-stat-grid article>strong{font-size:21px}.rank-stat-grid article>span{font-size:6px;line-height:1.4}.rank-stat-grid article>small{font-size:7px}.rank-muscle-grid{grid-template-columns:1fr}.rank-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.rank-gallery-item{padding:11px 4px}.rank-tabs button{font-size:9px}}

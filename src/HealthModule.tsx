@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import "./modules.css";
 import { supabase } from "./lib/supabase";
 import BodyDiagram from "./BodyDiagram";
+import RankCenter from "./RankCenter";
 
 type Exercise = { name: string; muscle: string; hint: string };
 type Plan = { id: string; name: string; description: string | null; plan_data: { exercises?: Exercise[] } };
@@ -62,6 +63,10 @@ export default function HealthModule() {
   const [filter, setFilter] = useState("All");
   const [selectedMuscle, setSelectedMuscle] = useState("Chest");
   const [muscleBests, setMuscleBests] = useState<Record<string, number>>({});
+  const [exerciseBests, setExerciseBests] = useState<Record<string, number>>({});
+  const [healthView, setHealthView] = useState<"Rank" | "Bodygraph" | "Leagues" | "Gallery">("Rank");
+  const [critique, setCritique] = useState("");
+  const [critiqueBusy, setCritiqueBusy] = useState(false);
 
   async function loadHealth() {
     if (!supabase) return;
@@ -73,10 +78,10 @@ export default function HealthModule() {
     if (sessionError) setError(sessionError.message);
     setPlans((planData ?? []) as Plan[]);
     setHistory((sessionData ?? []) as Session[]);
-    const allSets: { muscle_group: string; reps: number }[] = [];
+    const allSets: { muscle_group: string; exercise_name: string; reps: number }[] = [];
     for (let offset = 0; ; offset += 1000) {
       const { data, error: setErrorData } = await supabase.from("workout_sets")
-        .select("muscle_group,reps").order("created_at", { ascending: true }).range(offset, offset + 999);
+        .select("muscle_group,exercise_name,reps").order("created_at", { ascending: true }).range(offset, offset + 999);
       if (setErrorData) { setError(setErrorData.message); break; }
       allSets.push(...(data ?? []));
       if (!data || data.length < 1000) break;
@@ -90,12 +95,41 @@ export default function HealthModule() {
       }
     });
     setMuscleBests(bests);
+    const exerciseScores: Record<string, number> = {};
+    allSets.forEach((item) => {
+      const name = String(item.exercise_name || "");
+      if (name) exerciseScores[name] = Math.max(exerciseScores[name] ?? 0, Math.max(0, Number(item.reps || 0)));
+    });
+    setExerciseBests(exerciseScores);
   }
 
   useEffect(() => { void loadHealth(); }, []);
 
   const selectedReps = muscleBests[selectedMuscle] ?? 0;
   const selectedRank = getMuscleRank(selectedReps);
+
+  async function runWorkoutCritique() {
+    if (!supabase) return;
+    setCritiqueBusy(true); setError(""); setCritique("");
+    try {
+      const recent = history.slice(0, 6).map((session) => ({
+        name: session.name,
+        date: session.started_at,
+        completed: Boolean(session.completed_at),
+      }));
+      const { data, error: aiError } = await supabase.functions.invoke("banana-ai", {
+        body: {
+          message: "Review my logged workout progress. Give a concise, supportive critique: identify what is being tracked, what looks balanced or underrepresented, and one practical next step. Do not infer body composition or prescribe intense training. Use only the supplied records and clearly say when data is too limited.",
+          context: { recentSessions: recent, exerciseBestReps: exerciseBests, muscleBestReps: muscleBests },
+        },
+      });
+      if (aiError) throw aiError;
+      if (typeof data?.reply !== "string" || !data.reply.trim()) throw new Error(data?.error || "BANANA AI did not return a review.");
+      setCritique(data.reply.trim());
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Workout critique is unavailable right now.");
+    } finally { setCritiqueBusy(false); }
+  }
 
   const filteredLibrary = useMemo(
     () => library.filter((item) => filter === "All" || item.muscle === filter),
@@ -224,58 +258,83 @@ export default function HealthModule() {
     <section className="banana-module health-module">
       {(error || message) && <p className={error ? "module-alert error" : "module-alert"} role="status">{error || message}</p>}
 
-      <nav className="bodygraph-tabs" aria-label="Health sections">
-        <span className="bodygraph-tab-muted">Rank</span>
-        <span className="bodygraph-tab-active">Bodygraph</span>
-        <span className="bodygraph-tab-muted">Leagues</span>
-        <span className="bodygraph-tab-muted">Gallery</span>
+      <nav className="bodygraph-tabs rank-tabs" aria-label="Health sections">
+        {(["Rank", "Bodygraph", "Leagues", "Gallery"] as const).map((tab) => (
+          <button type="button" key={tab} className={healthView === tab ? "bodygraph-tab-active" : "bodygraph-tab-muted"} aria-pressed={healthView === tab} onClick={() => setHealthView(tab)}>{tab}</button>
+        ))}
       </nav>
 
-      <article className="bodygraph-screen">
-        <BodyDiagram selectedMuscle={selectedMuscle} onSelect={(muscle) => { setSelectedMuscle(muscle); setFilter(muscle); }} />
-      </article>
+      {healthView === "Rank" && (
+        <RankCenter
+          muscleBests={muscleBests}
+          exerciseBests={exerciseBests}
+          selectedMuscle={selectedMuscle}
+          onSelectMuscle={(muscle) => { setSelectedMuscle(muscle); setFilter(muscle); }}
+          critique={critique}
+          critiqueBusy={critiqueBusy}
+          onCritique={() => void runWorkoutCritique()}
+        />
+      )}
 
-      <article className="bodygraph-last-workout">
-        <div className="bodygraph-last-copy">
-          <p className="bodygraph-last-label">LAST WORKOUT</p>
-          <h3>{history[0]?.name ?? "Your training journey starts here"}</h3>
-          <p>{history[0] ? (history[0].completed_at ? "Workout completed · " : "Workout in progress · ") + new Date(history[0].started_at).toLocaleDateString() : "Log a workout to start tracking your improvements."}</p>
-        </div>
-        <div className="bodygraph-last-emblem" aria-hidden="true">?</div>
-        <a className="bodygraph-improvements-button" href="#muscle-rankings">SEE IMPROVEMENTS</a>
-      </article>
+      {healthView === "Bodygraph" && (
+        <>
+          <article className="bodygraph-screen">
+            <BodyDiagram selectedMuscle={selectedMuscle} onSelect={(muscle) => { setSelectedMuscle(muscle); setFilter(muscle); }} />
+          </article>
+          <section className="bodygraph-rankings" id="muscle-rankings">
+            <div className="bodygraph-rankings-heading"><h3>Muscle Rankings</h3><span aria-label="Ranks are based on your best single set">ⓘ</span></div>
+            <div className="bodygraph-selected-summary">
+              <div><span className="bodygraph-summary-label">SELECTED MUSCLE</span><h4>{selectedMuscle}</h4></div>
+              <div className="bodygraph-summary-score"><strong>{selectedReps}</strong><span>BEST REPS IN ONE SET</span></div>
+              <div className="bodygraph-summary-rank"><span>CURRENT RANK</span><strong>{selectedRank.name}</strong></div>
+            </div>
+            <div className="bodygraph-rankings-grid">
+              {MUSCLE_GROUPS.map((muscle) => {
+                const best = muscleBests[muscle] ?? 0;
+                const rank = getMuscleRank(best);
+                return <button type="button" key={muscle} className={selectedMuscle === muscle ? "bodygraph-rank-tile selected" : "bodygraph-rank-tile"} onClick={() => { setSelectedMuscle(muscle); setFilter(muscle); }}>
+                  <span>{muscle}</span><strong>{rank.name}</strong><small>{best.toLocaleString()} best reps</small>
+                </button>;
+              })}
+            </div>
+            <p className="module-footnote">Ranks use your highest logged rep count in one set for each muscle group. Sets are never added together.</p>
+          </section>
+        </>
+      )}
 
-      <section className="bodygraph-rankings" id="muscle-rankings">
-        <div className="bodygraph-rankings-heading"><h3>Muscle Rankings</h3><span aria-label="Ranks are based on your best single set">ⓘ</span></div>
-        <div className="bodygraph-selected-summary">
-          <div><span className="bodygraph-summary-label">SELECTED MUSCLE</span><h4>{selectedMuscle}</h4></div>
-          <div className="bodygraph-summary-score"><strong>{selectedReps}</strong><span>BEST REPS IN ONE SET</span></div>
-          <div className="bodygraph-summary-rank"><span>CURRENT RANK</span><strong>{selectedRank.name}</strong></div>
-        </div>
-        <div className="bodygraph-ladder" aria-label={selectedMuscle + " rank progression"}>
-          {REP_RANKS.slice(1).map((rank, index) => {
-            const achieved = selectedReps >= rank.min;
-            const current = selectedRank.name === rank.name;
-            return <div key={rank.name} className={current ? "bodygraph-ladder-row current" : achieved ? "bodygraph-ladder-row achieved" : "bodygraph-ladder-row"}>
-              <span className="bodygraph-ladder-badge" aria-hidden="true">{index + 1}</span>
-              <div className="bodygraph-ladder-name"><strong>{rank.name}</strong><small>{rank.min}+ consecutive reps</small></div>
-              <span className="bodygraph-ladder-status">{current ? "YOUR RANK" : achieved ? "UNLOCKED" : "LOCKED"}</span>
-            </div>;
-          })}
-        </div>
-        <p className="module-footnote">Ranks use your highest logged rep count in a single set for each muscle group. Sets are not added together.</p>
-        <div className="bodygraph-rankings-grid">
-          {MUSCLE_GROUPS.map((muscle) => {
-            const best = muscleBests[muscle] ?? 0;
-            const rank = getMuscleRank(best);
-            return <button type="button" key={muscle} className={selectedMuscle === muscle ? "bodygraph-rank-tile selected" : "bodygraph-rank-tile"} onClick={() => { setSelectedMuscle(muscle); setFilter(muscle); }}>
-              <span>{muscle}</span><strong>{rank.name}</strong><small>{best.toLocaleString()} best reps</small>
-            </button>;
-          })}
-        </div>
-      </section>
+      {healthView === "Leagues" && (
+        <section className="rank-feature-panel">
+          <div className="rank-feature-kicker">BANANA LEAGUES</div>
+          <h2>Your progress, your pace.</h2>
+          <p>Leagues are a personal progression view for now. Your rank is calculated from your best logged set, not lifetime reps or workout volume.</p>
+          <div className="rank-league-current"><span>YOUR CURRENT TIER</span><strong>{getMuscleRank(Math.max(0, ...Object.values(exerciseBests))).name}</strong><small>{Object.keys(exerciseBests).length} exercises tracked</small></div>
+          <p className="module-footnote">Social leaderboards will only appear when there is a real, privacy-safe ranking source. No placeholder competitors or invented scores.</p>
+        </section>
+      )}
 
-      <div className="module-grid two">
+      {healthView === "Gallery" && (
+        <section className="rank-feature-panel">
+          <div className="rank-feature-kicker">RANK GALLERY</div>
+          <h2>All nine ranks.</h2>
+          <p>Unlock each tier by improving your best consecutive-rep set on an exercise or muscle group.</p>
+          <div className="rank-gallery-grid">
+            {REP_RANKS.map((rank, index) => <div className="rank-gallery-item" key={rank.name}><span className={"rank-emblem rank-emblem-" + index}><b>{index + 1}</b></span><strong>{rank.name}</strong><small>{rank.min}+ reps</small></div>)}
+          </div>
+        </section>
+      )}
+
+      {history.length > 0 && (
+        <article className="bodygraph-last-workout">
+          <div className="bodygraph-last-copy">
+            <p className="bodygraph-last-label">LAST WORKOUT</p>
+            <h3>{history[0].name}</h3>
+            <p>{history[0].completed_at ? "Workout completed · " : "Workout in progress · "}{new Date(history[0].started_at).toLocaleDateString()}</p>
+          </div>
+          <a className="bodygraph-improvements-button" href="#health-workout-builder" onClick={() => setHealthView("Bodygraph")}>SEE BODYGRAPH</a>
+        </article>
+      )}
+
+      <div className="module-grid two" id="health-workout-builder">
         <article className="module-card">
           <div className="module-card-head"><div><p className="eyebrow">WORKOUT BUILDER</p><h3>Create a plan</h3></div><span>01</span></div>
           <label className="module-label">Plan name<input className="module-input" value={planName} onChange={(event) => setPlanName(event.target.value)} maxLength={100} /></label>

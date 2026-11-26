@@ -58,6 +58,7 @@ function App() {
     { name: "Legs", exercises: ["Bodyweight squats", "Reverse lunges", "Calf raises"] },
   ];
   const selectedGroup = muscleData.find((group) => group.name === selectedMuscle) ?? muscleData[0];
+  const muscleRank = (name: string) => [...muscleData].sort((a, b) => muscleTotal(b.name) - muscleTotal(a.name)).findIndex((group) => group.name === name) + 1;
   const muscleTotal = (name: string) => selectedGroupFor(name).exercises.reduce((sum, exercise) => sum + (repTotals[name + ":" + exercise] ?? 0), 0);
   const selectedGroupFor = (name: string) => muscleData.find((group) => group.name === name) ?? muscleData[0];
   const logExerciseReps = (muscle: string, exercise: string) => {
@@ -183,7 +184,33 @@ function App() {
                   <div><p className="eyebrow">YOUR BODYGRAPH</p><h2>Muscle rankings</h2></div>
                   <span className="workout-tag">BY TOTAL REPS</span>
                 </div>
-                <p className="muscle-helper">Tap a muscle group to see its exercises and log your reps. Rankings update automatically.</p>
+                <p className="muscle-helper">Tap a highlighted area to see that muscle group’s rank, then open it below to log reps.</p>
+                <div className="bodygraph-card">
+                  <div className="bodygraph-label">BODYGRAPH <span>FRONT + BACK</span></div>
+                  <div className="bodygraph-figures">
+                    <svg className="bodygraph-svg" viewBox="0 0 360 260" role="group" aria-label="Interactive front and back muscle map">
+                      <g className="body-silhouette">
+                        <circle cx="93" cy="27" r="17" /><path d="M79 46 L67 55 L49 62 L39 86 L48 115 L57 109 L62 91 L69 83 L68 126 L61 170 L66 212 L82 212 L91 168 L96 137 L101 168 L110 212 L126 212 L130 170 L117 126 L118 83 L125 91 L130 109 L139 115 L148 86 L137 62 L119 55 L107 46Z" />
+                        <circle cx="267" cy="27" r="17" /><path d="M253 46 L241 55 L223 62 L213 86 L222 115 L231 109 L236 91 L243 83 L242 126 L235 170 L240 212 L256 212 L265 168 L270 137 L275 168 L284 212 L300 212 L304 170 L291 126 L292 83 L299 91 L304 109 L313 115 L322 86 L311 62 L293 55 L281 46Z" />
+                      </g>
+                      <g className="body-muscles">
+                        <path className={selectedMuscle === "Shoulders" ? "muscle-zone active" : "muscle-zone"} d="M65 59 Q48 57 44 77 L56 91 L72 78Z M121 59 Q138 57 142 77 L130 91 L114 78Z" onClick={() => setSelectedMuscle("Shoulders")} role="button" tabIndex={0} aria-label="Select shoulders" />
+                        <path className={selectedMuscle === "Chest" ? "muscle-zone active" : "muscle-zone"} d="M72 67 Q91 56 93 76 L91 105 Q75 108 67 91Z M96 76 Q99 56 116 67 L121 91 Q113 108 97 105Z" onClick={() => setSelectedMuscle("Chest")} role="button" tabIndex={0} aria-label="Select chest" />
+                        <path className={selectedMuscle === "Biceps" ? "muscle-zone active" : "muscle-zone"} d="M47 91 L59 94 L53 125 L43 120Z M127 94 L139 91 L143 120 L133 125Z" onClick={() => setSelectedMuscle("Biceps")} role="button" tabIndex={0} aria-label="Select biceps" />
+                        <path className={selectedMuscle === "Triceps" ? "muscle-zone active" : "muscle-zone"} d="M221 91 L233 94 L227 125 L217 120Z M301 94 L313 91 L317 120 L307 125Z" onClick={() => setSelectedMuscle("Triceps")} role="button" tabIndex={0} aria-label="Select triceps" />
+                        <path className={selectedMuscle === "Core" ? "muscle-zone active" : "muscle-zone"} d="M76 108 L113 108 L109 150 L80 150Z" onClick={() => setSelectedMuscle("Core")} role="button" tabIndex={0} aria-label="Select core" />
+                        <path className={selectedMuscle === "Back" ? "muscle-zone active" : "muscle-zone"} d="M246 66 L288 66 L296 105 L270 137 L238 105Z" onClick={() => setSelectedMuscle("Back")} role="button" tabIndex={0} aria-label="Select back" />
+                        <path className={selectedMuscle === "Legs" ? "muscle-zone active" : "muscle-zone"} d="M68 153 L91 153 L86 207 L68 207Z M97 153 L119 153 L128 207 L110 207Z M242 153 L265 153 L260 207 L242 207Z M271 153 L293 153 L302 207 L284 207Z" onClick={() => setSelectedMuscle("Legs")} role="button" tabIndex={0} aria-label="Select legs" />
+                      </g>
+                    </svg>
+                  </div>
+                  <div className="bodygraph-legend"><span><i /> Selected muscle</span><small>Tap a body area</small></div>
+                  <div className="bodygraph-rank-pop">
+                    <div><span className="bodygraph-rank-kicker">SELECTED MUSCLE</span><strong>{selectedMuscle || "Choose a muscle"}</strong></div>
+                    <div className="bodygraph-rank-value"><b>{selectedMuscle ? "#" + muscleRank(selectedMuscle) : "—"}</b><span>RANK</span></div>
+                    <div className="bodygraph-reps">{selectedMuscle ? muscleTotal(selectedMuscle).toLocaleString() : "0"} <span>total reps</span></div>
+                  </div>
+                </div>
                 <div className="muscle-accordion">
                   {muscleData.map((group) => {
                     const isOpen = selectedMuscle === group.name;

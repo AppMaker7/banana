@@ -375,7 +375,7 @@ export default function HealthModule() {
       <div className="module-grid two">
         <article className="module-card">
           <div className="module-card-head"><div><p className="eyebrow">EXERCISE LIBRARY</p><h3>Find a movement</h3></div><span>{filteredLibrary.length} MOVES</span></div>
-          <select className="module-input" value={filter} onChange={(event) => setFilter(event.target.value)}><option>All</option>{["Chest","Back","Shoulders","Biceps","Triceps","Core","Legs"].map((muscle) => <option key={muscle}>{muscle}</option>)}</select>
+          <select className="module-input" value={filter} onChange={(event) => setFilter(event.target.value)}><option>All</option>{["Chest","Back","Shoulders","Biceps","Triceps","Core","Glutes","Legs"].map((muscle) => <option key={muscle}>{muscle}</option>)}</select>
           <div className="module-library-list">{filteredLibrary.map((item) => <div className="module-list-row" key={item.name}><div><strong>{item.name}</strong><small>{item.muscle} · {item.hint}</small></div><button className="module-text-button" onClick={() => setSelected((current) => current.includes(item.name) ? current : [...current, item.name])}>Add to plan +</button></div>)}</div>
         </article>
         <article className="module-card">

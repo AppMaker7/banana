@@ -228,10 +228,6 @@ export default function HealthModule() {
 
   return (
     <section className="banana-module health-module">
-      <div className="module-heading">
-        <div><p className="eyebrow">PHASE 2 · HEALTH</p><h2>Your training workspace</h2><p>Build plans, record sets, review sessions, and check in with recovery.</p></div>
-        <span className="module-pill">CLOUD SAVED</span>
-      </div>
       {(error || message) && <p className={error ? "module-alert error" : "module-alert"} role="status">{error || message}</p>}
 
       <nav className="bodygraph-tabs" aria-label="Health sections">

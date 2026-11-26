@@ -390,3 +390,16 @@
   .anatomy-reference .fitness-figures{gap:12px}
   .anatomy-reference .fitness-figure{width:min(43%,125px);max-height:230px}
 }
+
+
+/* Refined silhouette proportions */
+.anatomy-reference .fitness-figures{
+  max-width:460px;gap:clamp(20px,6vw,48px);padding:10px 0 2px;
+}
+.anatomy-reference .fitness-figure{
+  width:min(40%,170px);height:auto;max-height:330px;
+}
+@media(max-width:600px){
+  .anatomy-reference .fitness-figures{gap:18px}
+  .anatomy-reference .fitness-figure{width:min(42%,145px);max-height:285px}
+}

@@ -144,7 +144,7 @@ export default function FocusModule() {
             <strong>What this web version can do</strong>
             <p>Track timers, sessions, and break history. It cannot pause or block other Android apps. System-wide app restrictions would need a separately installed Android companion with the required permissions.</p>
           </div>
-          <button className="module-secondary" onClick={() => { setRunning(false); setSessionId(null); setRemaining(minutes * 60); setChallengeDone(false); setMessage("Focus timer reset. No app restrictions were changed."); }}>Emergency stop / reset</button>
+          <button className="module-secondary" onClick={() => { if (sessionId) { void finishSession(false); } else { setRunning(false); setRemaining(minutes * 60); setChallengeDone(false); setMessage("Focus timer reset. No app restrictions were changed."); } }}>Emergency stop / reset</button>
         </article>
       </div>
       <article className="module-card">

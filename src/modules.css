@@ -265,3 +265,33 @@
  .bodygraph-improvements-button{min-height:52px;border-radius:20px}
  .bodygraph-rankings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* BANANA Bodygraph — yellow and black reference palette */
+.bodygraph-tabs{border-bottom-color:#3A3210}
+.bodygraph-tab-muted{color:#A99F69}
+.bodygraph-tab-active{color:#FFE44D!important}
+.bodygraph-screen{background:#080808}
+.bodygraph-screen .body-diagram-pro .body-base{fill:#E9E2B8;stroke:#FFF2A6}
+.bodygraph-screen .body-diagram-pro .body-anatomy-lines{stroke:#FFF8D1}
+.bodygraph-screen .body-diagram-pro .body-zone path{fill:#FFE44D08;stroke:#665B25}
+.bodygraph-screen .body-diagram-pro .body-zone:hover path,
+.bodygraph-screen .body-diagram-pro .body-zone:focus-visible path{fill:#FFE44D66;stroke:#FFF0A0}
+.bodygraph-screen .body-diagram-pro .body-zone.selected path{fill:#FFE44DE8;stroke:#FFF5B5;filter:drop-shadow(0 0 6px #FFE44D88)}
+.bodygraph-last-workout{border-color:#3C3515;background:linear-gradient(145deg,#19170B,#10100B);box-shadow:0 10px 28px #0007}
+.bodygraph-last-label{color:#FFE44D}
+.bodygraph-last-copy h3{color:#FFF9DE}
+.bodygraph-last-copy p:last-child{color:#B7AD7C}
+.bodygraph-last-emblem{background:linear-gradient(#FFE44D,#C7A900) padding-box,conic-gradient(from 20deg,#FFE44D,#FFF4A8,#B58C00,#FFE44D) border-box;color:#171300}
+.bodygraph-improvements-button{border-color:#FFF09A;background:#FFE44D;box-shadow:0 5px 0 #9B7900;color:#171300}
+.bodygraph-improvements-button:active{box-shadow:0 3px 0 #9B7900}
+.bodygraph-rankings-heading h3{color:#FFF9DE}
+.bodygraph-rankings-heading span{color:#A99F69}
+.bodygraph-rank-tile{border-color:#393216;background:#17150A;color:#FFF9DE}
+.bodygraph-rank-tile span,.bodygraph-rank-tile small{color:#A99F69}
+.bodygraph-rank-tile strong{color:#FFE44D}
+.bodygraph-rank-tile.selected{border-color:#FFE44D;background:#28220A;box-shadow:0 0 0 1px #FFE44D33}
+.bodygraph-screen .body-diagram-legend{color:#A99F69}
+.bodygraph-screen .body-diagram-footer{color:#A99F69}
+.bodygraph-screen .body-diagram-active{color:#FFE44D}
+.bodygraph-screen .body-diagram-active i{background:#FFE44D;box-shadow:0 0 9px #FFE44D88}

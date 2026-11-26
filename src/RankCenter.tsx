@@ -21,9 +21,9 @@ function rankFor(reps: number) {
 function Emblem({ index, large = false }: { index: number; large?: boolean }) {
   return <span className={large ? "rank-emblem rank-emblem-large rank-emblem-" + index : "rank-emblem rank-emblem-" + index} aria-label={RANKS[index].name + " rank badge"}>
     <svg viewBox="0 0 64 72" aria-hidden="true">
-      <path d="M32 3 57 16 53 48 32 68 11 48 7 16Z" fill="currentColor" fillOpacity=".16" stroke="currentColor" strokeWidth="2.4"/>
+      <path d="M32 3 57 16 53 48 32 68 11 48 7 16Z" fill="currentColor" fillOpacity=".2" stroke="currentColor" strokeWidth="2.4"/>
       <path d="M32 9 51 19 47 44 32 59 17 44 13 19Z" fill="none" stroke="currentColor" strokeOpacity=".68" strokeWidth="1.2"/>
-      <path d="m32 17 4.4 9 10 1.4-7.2 7 1.7 10L32 39.7l-8.9 4.7 1.7-10-7.2-7 10-1.4Z" fill="currentColor" fillOpacity=".9"/>
+      <path d="M32 15 37 25 48 27 40 35 42 46 32 41 22 46 24 35 16 27 27 25Z" fill="currentColor" fillOpacity=".95"/>
       <path d="M16 50 32 61 48 50" fill="none" stroke="currentColor" strokeOpacity=".8" strokeWidth="1.5"/>
     </svg>
     <b>{index + 1}</b>

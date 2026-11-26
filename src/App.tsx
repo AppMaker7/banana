@@ -23,7 +23,8 @@ function App() {
   const [playing, setPlaying] = useState(false);
   const [focusEnabled, setFocusEnabled] = useState(false);
   const [workoutPreview, setWorkoutPreview] = useState(false);
-  const [selectedMuscle, setSelectedMuscle] = useState("Chest");
+  const [selectedMuscle, setSelectedMuscle] = useState("");
+  const [expandedMuscle, setExpandedMuscle] = useState("");
   const [repInputs, setRepInputs] = useState<Record<string, string>>({});
   const [repTotals, setRepTotals] = useState<Record<string, number>>(() => {
     try {
@@ -210,15 +211,16 @@ function App() {
                     <div className="bodygraph-reps">{selectedMuscle ? muscleTotal(selectedMuscle).toLocaleString() : "0"} <span>total reps</span></div>
                   </div>
                 </div>
+                <div className="muscle-groups-heading"><div><p className="eyebrow">YOUR TRAINING BREAKDOWN</p><h3>Muscle groups</h3></div><span>Tap to expand</span></div>
                 <div className="muscle-accordion">
                   {muscleData.map((group) => {
-                    const isOpen = selectedMuscle === group.name;
+                    const isOpen = expandedMuscle === group.name;
                     return (
                       <div className={isOpen ? "muscle-accordion-item expanded" : "muscle-accordion-item"} key={group.name}>
                         <button
                           className={isOpen ? "muscle-rank-row selected" : "muscle-rank-row"}
                           aria-expanded={isOpen}
-                          onClick={() => setSelectedMuscle(isOpen ? "" : group.name)}
+                          onClick={() => { setExpandedMuscle(isOpen ? "" : group.name); setSelectedMuscle(group.name); }}
                         >
                           <span className="muscle-rank-number">#{[...muscleData].sort((x,y) => muscleTotal(y.name)-muscleTotal(x.name)).findIndex((item) => item.name === group.name) + 1}</span>
                           <span className="muscle-rank-name">{group.name}</span>

@@ -335,13 +335,43 @@
 .bodygraph-screen .body-diagram-footer{margin:5px 8px 0;padding-top:10px;border-top:1px solid #29240F}
 @media(max-width:600px){.bodygraph-screen{padding:10px 0 8px!important}.bodygraph-screen .body-diagram-wrap{padding:0!important}.bodygraph-screen .anatomy-realistic{min-height:0}.bodygraph-screen .body-diagram-footer{font-size:7px}}
 
-/* Anatomy reference: use a professionally illustrated muscle plate, not generated silhouettes */
-.anatomy-reference{padding:14px 12px 12px!important;border:1px solid #342D14!important;border-radius:18px;background:#070707!important}
-.anatomy-reference-image{display:flex;align-items:center;justify-content:center;width:100%;min-height:190px;overflow:hidden;border-radius:12px;background:#F1EEDF}
-.anatomy-reference-image img{display:block;width:100%;height:auto;max-height:clamp(250px,65vw,540px);object-fit:contain;object-position:center}
-.anatomy-reference-caption{display:flex;justify-content:space-between;gap:10px;margin:12px 2px 9px;color:#A99F69;font-size:8px;font-weight:800;letter-spacing:.13em}
-.anatomy-muscle-select{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
-.anatomy-muscle-button{min-height:38px;padding:8px 6px;border:1px solid #393216;border-radius:9px;background:#141208;color:#C9BE8A;font:700 10px "DM Sans",sans-serif;cursor:pointer;transition:background .18s,border-color .18s,color .18s}
-.anatomy-muscle-button.active{border-color:#FFE44D;background:#FFE44D;color:#171300;box-shadow:0 0 15px #FFE44D22}
-.anatomy-reference-credit{margin:10px 2px 0;color:#716A4D;font-size:7px;line-height:1.4}
-@media(max-width:440px){.anatomy-reference{padding:8px!important}.anatomy-reference-image{min-height:150px}.anatomy-reference-caption{font-size:7px}.anatomy-muscle-select{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.anatomy-muscle-button{font-size:9px;min-height:35px}}
+/* Anatomy reference — compact and aligned inside the Bodygraph panel */
+.anatomy-reference{
+  width:100%;max-width:560px;box-sizing:border-box;margin:0 auto!important;
+  padding:0!important;border:0!important;border-radius:0;background:transparent!important;
+}
+.anatomy-reference-image{
+  display:flex;align-items:center;justify-content:center;width:100%;min-height:0;
+  overflow:hidden;border-radius:10px;background:transparent;
+}
+.anatomy-reference-image img{
+  display:block;width:auto;height:clamp(190px,30vw,285px);max-width:100%;
+  max-height:285px;object-fit:contain;object-position:center;
+}
+.anatomy-reference-caption{
+  display:flex;justify-content:center;gap:12px;flex-wrap:wrap;
+  margin:8px 2px 8px;color:#A99F69;font-size:7px;font-weight:800;letter-spacing:.12em;
+}
+.anatomy-muscle-select{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;
+  max-width:520px;margin:0 auto;
+}
+.anatomy-muscle-button{
+  min-height:34px;padding:7px 5px;border:1px solid #393216;border-radius:8px;
+  background:#141208;color:#C9BE8A;font:700 9px "DM Sans",sans-serif;
+  cursor:pointer;transition:background .18s,border-color .18s,color .18s;
+}
+.anatomy-muscle-button.active{
+  border-color:#FFE44D;background:#FFE44D;color:#171300;
+  box-shadow:0 0 12px #FFE44D1A;
+}
+.anatomy-reference-credit{
+  margin:7px 2px 0;color:#716A4D;font-size:7px;line-height:1.4;text-align:center;
+}
+@media(max-width:600px){
+  .anatomy-reference{max-width:100%}
+  .anatomy-reference-image img{height:clamp(175px,58vw,230px);max-height:230px}
+  .anatomy-reference-caption{font-size:6px;gap:8px}
+  .anatomy-muscle-select{gap:5px}
+  .anatomy-muscle-button{min-height:32px;font-size:8px}
+}

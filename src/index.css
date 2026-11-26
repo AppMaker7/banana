@@ -155,3 +155,25 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .muscle-groups-heading{display:flex;align-items:end;justify-content:space-between;margin-top:12px;padding:4px 2px}
 .muscle-groups-heading h3{margin:3px 0 0;font:600 18px "Space Grotesk",sans-serif;color:var(--text)}
 .muscle-groups-heading>span{font-size:9px;color:#82919C;padding-bottom:3px}
+
+/* V2 navigation: six destinations fit on mobile */
+@media(max-width:650px){.mobile-nav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));justify-content:initial;gap:2px}.mobile-nav-item{min-width:0;padding:4px 1px}.mobile-nav-item small{font-size:7px}}
+
+/* Persistent music mini-player */
+.banana-mini-player{display:none;position:fixed;z-index:35;right:18px;bottom:16px;width:min(560px,calc(100% - 36px));box-sizing:border-box;padding:11px 13px;border:1px solid #34434D;border-radius:14px;background:rgba(8,18,27,.97);box-shadow:0 14px 45px #0009;backdrop-filter:blur(18px);color:#F1F4ED}
+.banana-mini-player.visible{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+.mini-player-track{display:flex;align-items:center;gap:9px;min-width:0}
+.mini-player-art{width:32px;height:32px;display:grid;place-items:center;border:1px solid #FFE44D55;border-radius:8px;background:#FFE44D12;color:#FFE44D}
+.mini-player-track>span:last-child{display:grid;gap:3px;min-width:0}
+.mini-player-track strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+.mini-player-track small{color:#82919C;font-size:8px}
+.banana-mini-player audio{grid-column:1/-1;width:100%;height:34px}
+.mini-player-buttons{display:flex;gap:5px}
+.mini-player-buttons button{width:29px;height:29px;border:1px solid #34434D;border-radius:8px;background:#13232D;color:#DCE6EA;font-size:10px}
+.mini-player-error{grid-column:1/-1;color:#FFB6B6;font-size:8px;line-height:1.4}
+@media(max-width:650px){
+ .banana-mini-player{right:8px;bottom:calc(76px + env(safe-area-inset-bottom));width:calc(100% - 16px);padding:8px 10px}
+ .banana-mini-player.visible{grid-template-columns:minmax(0,1fr) auto;gap:6px 8px}
+ .banana-mini-player audio{height:31px}
+ .mini-player-track strong{font-size:9px}
+}

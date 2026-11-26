@@ -113,3 +113,16 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .muscle-exercise-row button{padding:8px 10px;border:0;border-radius:7px;background:var(--yellow);color:#172027;font-size:9px;font-weight:700}
 .muscle-exercise-row button:disabled{opacity:.35;cursor:not-allowed}
 @media(max-width:650px){.muscle-ranking-layout{grid-template-columns:1fr}.muscle-list{gap:3px;padding:9px}.muscle-rank-row{padding:10px 8px}.muscle-exercise-panel{padding:14px}.muscle-exercise-row input{width:66px}}
+
+
+/* Expandable muscle exercise dropdowns */
+.muscle-accordion{display:grid;gap:8px}
+.muscle-accordion-item{overflow:hidden;border:1px solid #20303A;border-radius:12px;background:#0F1922;transition:border-color .2s,background .2s}
+.muscle-accordion-item.expanded{border-color:#FFE44D55;background:linear-gradient(145deg,#14212B,#0F1922)}
+.muscle-accordion-item .muscle-rank-row{padding:14px 13px}
+.muscle-accordion-item .muscle-chevron{transition:transform .2s;color:var(--yellow)}
+.muscle-dropdown{padding:2px 14px 12px;border-top:1px solid #263640;background:#0B151D;animation:muscleDropIn .18s ease-out}
+.muscle-dropdown .muscle-exercise-heading{padding:12px 0 8px}
+.muscle-dropdown .muscle-exercise-heading h3{font-size:16px}
+.muscle-dropdown .muscle-exercise-row:last-child{padding-bottom:2px}
+@keyframes muscleDropIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}

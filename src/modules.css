@@ -123,3 +123,67 @@
 
 .break-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
 .break-controls button{padding:8px 10px}
+
+
+/* BANANA V3 — cleaner surfaces, body map, and Spotify */
+.health-v3-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.health-v3-stats article{display:grid;gap:7px;padding:15px 17px;border:1px solid #263943;border-radius:13px;background:linear-gradient(145deg,#14232D,#0C171F)}
+.health-v3-stats span{color:#8296A1;font-size:8px;font-weight:700;letter-spacing:.14em}
+.health-v3-stats strong{font:600 27px "Space Grotesk",sans-serif;letter-spacing:-.04em;color:#F1F4ED}
+.health-v3-stats small{color:#82919C;font-size:8px}
+.bodygraph-v3-card{background:radial-gradient(ellipse at 25% 10%,#35DDF510,transparent 45%),linear-gradient(145deg,#111F29,#0B151D)}
+.bodygraph-v3-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(180px,.7fr);gap:18px;align-items:center}
+.body-diagram-wrap{min-width:0;padding:14px;border:1px solid #263943;border-radius:12px;background:linear-gradient(180deg,#0B151D,#0D1922)}
+.body-diagram-legend{display:flex;justify-content:space-around;color:#7E929D;font-size:8px;font-weight:700;letter-spacing:.16em}
+.body-diagram{display:block;width:100%;max-height:330px;overflow:visible}
+.body-base{opacity:.94}
+.body-zone{cursor:pointer;outline:none}
+.body-zone path{fill:#35DDF51B;stroke:#35DDF55A;stroke-width:1.4;transition:fill .18s,stroke .18s,filter .18s}
+.body-zone:hover path,.body-zone:focus-visible path{fill:#35DDF55A;stroke:#73EDFA;stroke-width:2}
+.body-zone.selected path{fill:#FFE44D8A;stroke:#FFE44D;stroke-width:2;filter:drop-shadow(0 0 5px #FFE44D55)}
+.body-diagram-labels{fill:#8296A1}
+.body-muscle-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.body-muscle-chip{padding:7px 10px;border:1px solid #2B3D47;border-radius:30px;background:#0A151D;color:#A9B7BF;font-size:8px}
+.body-muscle-chip.selected{border-color:#FFE44D88;background:#FFE44D14;color:#FFE44D}
+.bodygraph-v3-detail{padding:17px;border:1px solid #2B3D47;border-radius:12px;background:#0B151D}
+.bodygraph-v3-detail h3{margin:0 0 15px;font:600 23px "Space Grotesk",sans-serif}
+.bodygraph-rank{display:flex;align-items:center;gap:9px}
+.bodygraph-rank strong{font:600 34px "Space Grotesk",sans-serif;color:#FFE44D}
+.bodygraph-rank span{color:#8296A1;font-size:8px;letter-spacing:.12em}
+.bodygraph-total{margin:12px 0;color:#F1F4ED;font:600 19px "Space Grotesk",sans-serif}
+.bodygraph-total span{color:#82919C;font:400 9px "DM Sans",sans-serif}
+.bodygraph-v3-detail .module-footnote{margin:0 0 14px}
+.spotify-v3-card{background:radial-gradient(ellipse at 0 0,#1B684B20,transparent 45%),#101A23}
+.spotify-v3-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}
+.spotify-v3-form .module-primary{width:auto;white-space:nowrap}
+.spotify-v3-player{display:grid;gap:9px;margin-top:15px}
+.spotify-v3-player iframe{display:block;width:100%;border:0;border-radius:12px;background:#111}
+.spotify-v3-player a{justify-self:end;color:#A7D8C0;font-size:9px;text-decoration:none}
+.spotify-v3-player a:hover{color:#FFE44D}
+.spotify-v3-empty{display:flex;align-items:center;gap:12px;margin-top:14px;padding:15px;border:1px dashed #365248;border-radius:10px;background:#0B1715}
+.spotify-v3-empty>span{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:#1DB95420;color:#1DB954;font-size:20px}
+.spotify-v3-empty p{margin:0;color:#91A79C;font-size:9px;line-height:1.5}
+.assistant-chat .assistant-answer{white-space:pre-wrap}
+.assistant-question .module-small-button{min-width:82px}
+.module-card,.stat-card,.panel,.feature-card{transition:border-color .2s ease,transform .2s ease,background-color .2s ease}
+.module-card:hover{border-color:#35505D}
+.module-input{transition:border-color .18s,box-shadow .18s}
+.module-input:focus{border-color:#35DDF5;box-shadow:0 0 0 3px #35DDF512;outline:none}
+.module-primary,.module-secondary,.module-small-button,.module-text-button,.body-muscle-chip{transition:filter .18s,transform .18s,border-color .18s}
+.module-primary:hover:not(:disabled),.module-small-button:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+@media(max-width:760px){
+  .health-v3-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .health-v3-stats article{padding:12px 10px}
+  .health-v3-stats strong{font-size:21px}
+  .bodygraph-v3-layout{grid-template-columns:1fr}
+  .bodygraph-v3-detail{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 12px}
+  .bodygraph-v3-detail .eyebrow,.bodygraph-v3-detail h3,.bodygraph-rank,.bodygraph-total,.bodygraph-v3-detail .module-footnote,.bodygraph-v3-detail button{grid-column:1/-1}
+}
+@media(max-width:440px){
+  .health-v3-stats span{font-size:7px;letter-spacing:.08em}
+  .health-v3-stats strong{font-size:18px}
+  .health-v3-stats small{font-size:7px}
+  .body-diagram-wrap{padding:8px}
+  .spotify-v3-form{grid-template-columns:1fr}
+  .spotify-v3-form .module-primary{width:100%}
+}

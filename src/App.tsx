@@ -3,6 +3,7 @@ import HealthModule from "./HealthModule";
 import FocusModule from "./FocusModule";
 import AssistantModule from "./AssistantModule";
 import MusicModule from "./MusicModule";
+import { MusicPlayerProvider } from "./MusicPlayerContext";
 
 type Tab = "Home" | "Health" | "Focus" | "AI" | "Music" | "Settings";
 
@@ -77,6 +78,7 @@ function App() {
   const title = active === "Home" ? "Your day, in balance." : active === "Health" ? "Move with intention." : active === "Focus" ? "Take back your time." : active === "AI" ? "Make a plan that works." : active === "Music" ? "Set your soundtrack." : "Make it yours.";
 
   return (
+    <MusicPlayerProvider>
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand"><span className="brand-mark"><BananaMark /></span><span>BANANA</span></div>
@@ -297,6 +299,7 @@ function App() {
         {navItems.map((item) => <button key={item.name} className={active === item.name ? "mobile-nav-item active" : "mobile-nav-item"} onClick={() => setActive(item.name)}><span>{item.icon}</span><small>{item.name}</small></button>)}
       </nav>
     </div>
+    </MusicPlayerProvider>
   );
 }
 

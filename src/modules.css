@@ -51,3 +51,28 @@
 .module-status{white-space:nowrap}
 @media(max-width:760px){.module-grid.two{grid-template-columns:1fr}.module-heading h2{font-size:21px}.recovery-form{grid-template-columns:1fr 1fr}}
 @media(max-width:440px){.module-card{padding:13px}.module-pick-list{grid-template-columns:1fr}.set-entry-fields{grid-template-columns:1fr 1fr}.set-entry-fields button{grid-column:1/-1}.module-heading{display:block}.module-pill{display:inline-block;margin-top:10px}}
+
+/* Focus module */
+.focus-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:13px;align-items:stretch}
+.focus-timer-card{display:flex;flex-direction:column;align-items:stretch;background:radial-gradient(ellipse at 50% 35%,#173C49 0,transparent 55%),#101A23}
+.focus-clock{margin:24px 0 17px;text-align:center;color:#F1F4ED;font:600 clamp(48px,9vw,76px) "Space Grotesk",sans-serif;letter-spacing:-.07em;font-variant-numeric:tabular-nums}
+.focus-progress{height:5px;overflow:hidden;border-radius:10px;background:#263640}
+.focus-progress i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#35DDF5,#FFE44D);transition:width .3s}
+.focus-duration{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:18px 0}
+.duration-chip{padding:8px 12px;border:1px solid #34434D;border-radius:30px;background:#0B151D;color:#B4C0C7;font-size:9px}
+.duration-chip.selected{border-color:#FFE44D88;background:#FFE44D16;color:#FFE44D}
+.duration-chip:disabled{opacity:.55}
+.focus-main-button{margin-top:auto}
+.focus-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
+.challenge-check{display:flex;align-items:flex-start;gap:10px;margin:18px 0;padding:13px;border:1px solid #2C3C46;border-radius:10px;background:#0B151D;cursor:pointer}
+.challenge-check input{margin:2px 0 0;accent-color:#35DDF5}
+.challenge-check span{display:grid;gap:5px}
+.challenge-check strong{font-size:10px}
+.challenge-check small{color:#82919C;font-size:8px;line-height:1.5}
+.focus-info{padding:12px;border:1px solid #35DDF533;border-radius:10px;background:#35DDF508}
+.focus-info strong{font-size:10px;color:#B7EAF2}
+.focus-info p{margin:7px 0 0;color:#8CA1AC;font-size:9px;line-height:1.6}
+.break-earned{display:grid;gap:5px;margin-top:14px;padding:12px;border:1px solid #FFE44D55;border-radius:9px;background:#FFE44D0C}
+.break-earned strong{color:#FFE44D;font-size:10px}
+.break-earned span{color:#9AAAB2;font-size:8px;line-height:1.5}
+@media(max-width:760px){.focus-layout{grid-template-columns:1fr}}

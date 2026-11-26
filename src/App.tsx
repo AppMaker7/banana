@@ -57,7 +57,6 @@ function App() {
     { name: "Core", exercises: ["Crunches", "Dead bugs", "Bicycle crunches"] },
     { name: "Legs", exercises: ["Bodyweight squats", "Reverse lunges", "Calf raises"] },
   ];
-  const selectedGroup = muscleData.find((group) => group.name === selectedMuscle) ?? muscleData[0];
   const muscleRank = (name: string) => [...muscleData].sort((a, b) => muscleTotal(b.name) - muscleTotal(a.name)).findIndex((group) => group.name === name) + 1;
   const muscleTotal = (name: string) => selectedGroupFor(name).exercises.reduce((sum, exercise) => sum + (repTotals[name + ":" + exercise] ?? 0), 0);
   const selectedGroupFor = (name: string) => muscleData.find((group) => group.name === name) ?? muscleData[0];

@@ -146,6 +146,7 @@ function App() {
               </section>
             </>
           ) : active === "Health" ? (
+            <>
             <section className="workout-dashboard">
               <section className="muscle-ranking-section">
                 <div className="health-section-title">
@@ -271,6 +272,7 @@ function App() {
               </div>
             </section>
             <HealthModule />
+            </>
           ) : active === "Focus" ? (
             <FocusModule />
           ) : (

@@ -152,8 +152,8 @@ export default function MoreModule() {
     const friend = connections.find((row) => row.status === "accepted" && row.friend_id === (event.currentTarget.elements.namedItem("challenge-friend") as HTMLSelectElement | null)?.value);
     if (!friend) { setError("Choose an accepted friend first."); return; }
     const target = Math.floor(Number(challengeTarget));
-    if (!challengeTitle.trim() || !Number.isFinite(target) || target < 1 || !challengeEnd) {
-      setError("Add a title, a valid target, and an end date."); return;
+    if (!challengeTitle.trim() || !Number.isFinite(target) || target < 1 || target > maxChallengeTarget || !challengeEnd) {
+      setError("Add a title and end date. Keep the target within the safe limit for the challenge length."); return;
     }
     setBusy(true); setError(""); setMessage("");
     try {
@@ -184,6 +184,10 @@ export default function MoreModule() {
       setError(caught instanceof Error ? caught.message : "Couldn't update that challenge.");
     } finally { setBusy(false); }
   }
+
+  const challengeDays = Math.max(1, Math.floor((new Date(challengeEnd + "T12:00:00").getTime() - new Date(localDay(new Date()) + "T12:00:00").getTime()) / 86400000) + 1);
+  const challengeWeeks = Math.max(1, Math.ceil(challengeDays / 7));
+  const maxChallengeTarget = challengeMetric === "workouts" ? challengeWeeks * 3 : challengeMetric === "focus_minutes" ? challengeWeeks * 180 : challengeWeeks * 50;
 
   function ownChallengeProgress(challenge: FriendChallenge) {
     const start = new Date(challenge.starts_on + "T00:00:00").getTime();
@@ -306,10 +310,10 @@ export default function MoreModule() {
           <form className="community-challenge-form" onSubmit={createFriendChallenge}>
             <label className="module-label">Invite a friend<select className="module-input" name="challenge-friend" required defaultValue=""><option value="" disabled>Select a friend</option>{connections.filter((row) => row.status === "accepted").map((row) => <option key={row.friend_id} value={row.friend_id}>{row.display_name}</option>)}</select></label>
             <label className="module-label">Challenge name<input className="module-input" value={challengeTitle} onChange={(event) => setChallengeTitle(event.target.value)} maxLength={100} required /></label>
-            <label className="module-label">Track<select className="module-input" value={challengeMetric} onChange={(event) => setChallengeMetric(event.target.value as typeof challengeMetric)}><option value="workouts">Completed workouts</option><option value="focus_minutes">Focus minutes</option><option value="completed_tasks">Completed tasks</option></select></label>
-            <label className="module-label">Target<input className="module-input" type="number" min="1" max="100000" value={challengeTarget} onChange={(event) => setChallengeTarget(event.target.value)} required /></label>
+            <label className="module-label">Track<select className="module-input" value={challengeMetric} onChange={(event) => { const next = event.target.value as typeof challengeMetric; setChallengeMetric(next); setChallengeTarget(next === "workouts" ? "3" : next === "focus_minutes" ? "90" : "10"); }}><option value="workouts">Completed workouts</option><option value="focus_minutes">Focus minutes</option><option value="completed_tasks">Completed tasks</option></select></label>
+            <label className="module-label">Target<input className="module-input" type="number" min="1" max={maxChallengeTarget} value={challengeTarget} onChange={(event) => setChallengeTarget(event.target.value)} required /></label>
             <label className="module-label">Ends on<input className="module-input" type="date" min={localDay(new Date())} value={challengeEnd} onChange={(event) => setChallengeEnd(event.target.value)} required /></label>
-            <button className="module-primary" disabled={busy || connections.every((row) => row.status !== "accepted")}>Send challenge invitation</button>
+            <button className="module-primary" disabled={busy || connections.every((row) => row.status !== "accepted")}>Send challenge invitation</button><p className="module-footnote">Challenge targets are capped at 3 workouts, 180 focus minutes, or 50 tasks per week. Keep it friendly and leave room for rest.</p>
           </form>
           <div className="community-challenge-list">{challenges.length === 0 ? <p className="module-empty">Your accepted challenges will appear here.</p> : challenges.map((row) => { const progress = ownChallengeProgress(row); const incoming = row.participant_id === currentUserId && row.status === "pending"; const percent = Math.min(100, Math.round(progress / Math.max(1,row.target) * 100)); return <div className="community-challenge" key={row.id}><div className="community-challenge-top"><div><strong>{row.title}</strong><small>{row.metric.replace("_"," ")} · target {row.target} · ends {new Date(row.ends_on + "T12:00:00").toLocaleDateString()}</small></div><span className="module-status">{row.status.toUpperCase()}</span></div>{row.status === "pending" && !incoming && <small className="community-progress-label">Waiting for your friend to respond.</small>}{row.status === "accepted" && <><div className="community-progress"><i style={{width:percent+"%"}}/></div><small className="community-progress-label">Your logged progress: {progress} / {row.target}</small></>}{incoming && <div className="community-actions"><button type="button" disabled={busy} onClick={() => void respondToChallenge(row.id,"accepted")}>Accept</button><button type="button" className="module-secondary" disabled={busy} onClick={() => void respondToChallenge(row.id,"declined")}>Decline</button></div>}</div>})}</div>
         </article>

@@ -5,6 +5,7 @@ import { supabase } from "./lib/supabase";
 type Section = "Overview" | "Calendar" | "Journal" | "Discover" | "Achievements" | "Community" | "Statistics" | "Notifications";
 type FriendConnection = { id: string; friend_id: string; display_name: string; status: "pending" | "accepted" | "rejected"; requested_by: string; created_at: string; incoming: boolean };
 type FriendChallenge = { id: string; creator_id: string; participant_id: string; title: string; metric: "workouts" | "focus_minutes" | "completed_tasks"; target: number; starts_on: string; ends_on: string; status: "pending" | "accepted" | "declined" | "completed"; created_at: string };
+type LeaderboardRow = { display_name: string; workouts: number; focus_minutes: number; completed_tasks: number; xp: number; is_you: boolean };
 type Task = { id: string; title: string; notes: string | null; priority: string; due_at: string | null; completed_at: string | null; created_at: string };
 type Workout = { id: string; name: string; started_at: string; completed_at: string | null };
 type FocusLog = { id: string; started_at: string; completed_minutes: number | null };
@@ -50,6 +51,8 @@ export default function MoreModule() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [friendCode, setFriendCode] = useState("");
+  const [shareProgress, setShareProgress] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
   const [currentUserId, setCurrentUserId] = useState("");
   const [friendInput, setFriendInput] = useState("");
   const [connections, setConnections] = useState<FriendConnection[]>([]);
@@ -68,7 +71,7 @@ export default function MoreModule() {
       if (!auth.user) throw new Error("Log in again to load your BANANA data.");
       const uid = auth.user.id;
       setCurrentUserId(uid);
-      const [taskRows, workoutRows, focusRows, setRows, achievementRows, unlockRows, settings, profile, connectionRows, challengeRows] = await Promise.all([
+      const [taskRows, workoutRows, focusRows, setRows, achievementRows, unlockRows, settings, profile, connectionRows, leaderboardRows, challengeRows] = await Promise.all([
         supabase.from("tasks").select("id,title,notes,priority,due_at,completed_at,created_at").order("created_at", { ascending: false }).limit(250),
         supabase.from("workout_sessions").select("id,name,started_at,completed_at").order("started_at", { ascending: false }).limit(250),
         supabase.from("focus_sessions").select("id,started_at,completed_minutes").order("started_at", { ascending: false }).limit(250),
@@ -76,11 +79,12 @@ export default function MoreModule() {
         supabase.from("achievements").select("id,name,description,category,icon").order("category"),
         supabase.from("user_achievements").select("achievement_id").eq("user_id", uid),
         supabase.from("user_settings").select("preferences").eq("user_id", uid).maybeSingle(),
-        supabase.from("profiles").select("friend_code").eq("id", uid).maybeSingle(),
+        supabase.from("profiles").select("friend_code,share_progress").eq("id", uid).maybeSingle(),
         supabase.rpc("list_banana_connections"),
+        supabase.rpc("list_banana_friend_leaderboard"),
         supabase.from("friend_challenges").select("id,creator_id,participant_id,title,metric,target,starts_on,ends_on,status,created_at").order("created_at", { ascending: false }).limit(100),
       ]);
-      for (const result of [taskRows, workoutRows, focusRows, setRows, achievementRows, unlockRows, settings, profile, connectionRows, challengeRows]) if (result.error) throw result.error;
+      for (const result of [taskRows, workoutRows, focusRows, setRows, achievementRows, unlockRows, settings, profile, connectionRows, leaderboardRows, challengeRows]) if (result.error) throw result.error;
       setTasks((taskRows.data ?? []) as Task[]);
       setWorkouts((workoutRows.data ?? []) as Workout[]);
       setFocus((focusRows.data ?? []) as FocusLog[]);
@@ -88,6 +92,8 @@ export default function MoreModule() {
       setAchievements((achievementRows.data ?? []) as Achievement[]);
       setUnlocked(new Set((unlockRows.data ?? []).map((row: { achievement_id: string }) => row.achievement_id)));
       setFriendCode(String(profile.data?.friend_code ?? ""));
+      setShareProgress(Boolean(profile.data?.share_progress));
+      setLeaderboard((leaderboardRows.data ?? []) as LeaderboardRow[]);
       setConnections((connectionRows.data ?? []) as FriendConnection[]);
       setChallenges((challengeRows.data ?? []) as FriendChallenge[]);
       const preferences = (settings.data?.preferences ?? {}) as Record<string, unknown>;
@@ -106,6 +112,22 @@ export default function MoreModule() {
   const selectedTasks = tasks.filter((row) => row.due_at && localDay(row.due_at) === selectedDate);
   const selectedWorkouts = workouts.filter((row) => localDay(row.started_at) === selectedDate);
   const filteredMovements = useMemo(() => movements.filter((row) => filter === "All" || row.group === filter), [filter]);
+
+  async function saveProgressSharing() {
+    if (!supabase) return;
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const { data: auth, error: authError } = await supabase.auth.getUser();
+      if (authError) throw authError;
+      if (!auth.user) throw new Error("Log in again to update your privacy setting.");
+      const { error: updateError } = await supabase.from("profiles").update({ share_progress: shareProgress }).eq("id", auth.user.id);
+      if (updateError) throw updateError;
+      setMessage(shareProgress ? "Your activity is now visible to accepted friends who also opt in." : "Your activity sharing is turned off.");
+      await load();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Couldn't update your leaderboard privacy.");
+    } finally { setBusy(false); }
+  }
 
   async function sendFriendRequest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -321,6 +343,12 @@ export default function MoreModule() {
             {connections.length === 0 ? <p className="module-empty">No connections yet. Send a friend code to get started.</p> : <div className="community-connection-list">{connections.map((row) => <div className="community-connection" key={row.id}><span className="community-avatar">{row.display_name.slice(0,1).toUpperCase()}</span><div><strong>{row.display_name}</strong><small>{row.status === "accepted" ? "Connected" : row.status === "pending" ? (row.incoming ? "Incoming request" : "Request sent") : "Request declined"}</small></div>{row.status === "pending" && row.incoming ? <div className="community-actions"><button type="button" disabled={busy} onClick={() => void respondToFriend(row.id,"accepted")}>Accept</button><button type="button" className="module-secondary" disabled={busy} onClick={() => void respondToFriend(row.id,"rejected")}>Decline</button></div> : <span className="module-status">{row.status.toUpperCase()}</span>}</div>)}</div>}
           </article>
         </div>
+        <article className="module-card community-leaderboard-card">
+          <div className="module-card-head"><div><p className="eyebrow">FRIENDS LEADERBOARD</p><h3>Friendly progress board.</h3><p>Only accepted friends who both opt in appear here. No public profiles or private journal data.</p></div><span>{leaderboard.length} OPTED IN</span></div>
+          <label className="settings-toggle"><span><strong>Share my progress with accepted friends</strong><small>Share completed workout, task and focus totals plus BANANA XP. This is off by default.</small></span><input type="checkbox" checked={shareProgress} onChange={(event) => setShareProgress(event.target.checked)} /></label>
+          <button type="button" className="module-primary" disabled={busy} onClick={() => void saveProgressSharing()}>Save sharing preference</button>
+          {leaderboard.length ? <div className="community-leaderboard-list">{leaderboard.map((row,index)=><div className="community-leaderboard-row" key={row.display_name+"-"+index}><span className="community-leaderboard-rank">{String(index+1).padStart(2,"0")}</span><div><strong>{row.display_name}{row.is_you?" (you)":""}</strong><small>{row.workouts} workouts · {row.completed_tasks} tasks · {row.focus_minutes} focus minutes</small></div><b>{row.xp.toLocaleString()} XP</b></div>)}</div> : <p className="module-empty">{shareProgress ? "Your accepted friends need to opt in too before the board can show them." : "Turn on sharing to join the friends-only leaderboard. You can switch it off any time."}</p>}
+        </article>
         <article className="module-card">
           <div className="module-card-head"><div><p className="eyebrow">FRIEND CHALLENGES</p><h3>Make a friendly challenge.</h3><p>Challenges use your own saved activity. Only the invited friend can accept or decline.</p></div><span>{challenges.filter((row) => row.status === "accepted").length} ACTIVE</span></div>
           <form className="community-challenge-form" onSubmit={createFriendChallenge}>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "banana-shell-v4";
+const CACHE_NAME = "banana-shell-v5";
 const APP_SHELL = ["/", "/index.html", "/manifest.webmanifest", "/banana.svg"];
 
 self.addEventListener("install", (event) => {

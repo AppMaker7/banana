@@ -215,3 +215,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .assistant-task{border-color:#39311F;background:#11110D}
 .assistant-task strong{color:#FFF5D9}
 .assistant-task small{color:#A69D85}
+
+.community-leaderboard-list{display:grid;gap:8px;margin-top:14px}
+.community-leaderboard-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:11px;align-items:center;padding:12px;border:1px solid #39311F;border-radius:10px;background:#11110D}
+.community-leaderboard-rank{color:#B9A66B;font:700 15px "Space Grotesk",sans-serif}
+.community-leaderboard-row>div{display:grid;gap:4px;min-width:0}
+.community-leaderboard-row strong{color:#FFF5D9;font-size:10px}
+.community-leaderboard-row small{color:#A69D85;font-size:8px}
+.community-leaderboard-row>b{color:#FFE27A;font:700 13px "Space Grotesk",sans-serif;white-space:nowrap}

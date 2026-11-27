@@ -4,7 +4,7 @@ type ZoneProps = { name: string; d: string; selectedMuscle: string; onSelect: (m
 function Zone({ name, d, selectedMuscle, onSelect }: ZoneProps) {
   return <path className={selectedMuscle === name ? "banana-muscle-zone selected" : "banana-muscle-zone"} d={d} role="button" tabIndex={0} aria-label={name} aria-pressed={selectedMuscle === name} onClick={() => onSelect(name)} onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(name); } }} />;
 }
-const bodyPath = "M98 56 L98 68 Q78 68 62 77 L45 91 29 145 Q26 156 35 160 Q44 164 49 152 L63 113 66 180 Q67 199 80 216 L89 229 Q84 242 80 257 L76 278 79 326 68 397 Q66 409 77 411 Q88 413 92 400 L108 306 112 306 128 400 Q132 413 143 411 Q154 409 152 397 L141 326 144 278 140 257 Q136 242 131 229 L140 216 Q153 199 154 180 L157 113 171 152 Q176 164 185 160 Q194 156 191 145 L175 91 158 77 Q142 68 122 68 L122 56Z";
+const bodyPath = "M94 57 L94 70 C83 71 72 76 62 84 C53 91 47 102 43 114 L25 160 C22 169 26 176 34 179 C41 181 46 177 49 169 L62 137 L64 189 C65 205 72 217 84 228 C79 243 76 259 76 275 L80 323 L67 397 C65 407 70 413 79 414 C87 414 92 409 94 400 L108 307 L112 307 L126 400 C128 409 133 414 141 414 C150 413 155 407 153 397 L140 323 L144 275 C144 259 141 243 136 228 C148 217 155 205 156 189 L158 137 L171 169 C174 177 179 181 186 179 C194 176 198 169 195 160 L177 114 C173 102 167 91 158 84 C148 76 137 71 126 70 L126 57Z";
 function Front({ selectedMuscle, onSelect }: Props) {
  return <svg className="banana-anatomy-figure" viewBox="0 0 220 430" role="group" aria-label="Front muscle map">
   <g className="banana-body-base"><circle cx="110" cy="35" r="23"/><path d={bodyPath}/></g>

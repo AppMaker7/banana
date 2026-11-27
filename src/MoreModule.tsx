@@ -50,6 +50,7 @@ export default function MoreModule() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [friendCode, setFriendCode] = useState("");
+  const [currentUserId, setCurrentUserId] = useState("");
   const [friendInput, setFriendInput] = useState("");
   const [connections, setConnections] = useState<FriendConnection[]>([]);
   const [challenges, setChallenges] = useState<FriendChallenge[]>([]);
@@ -66,6 +67,7 @@ export default function MoreModule() {
       if (authError) throw authError;
       if (!auth.user) throw new Error("Log in again to load your BANANA data.");
       const uid = auth.user.id;
+      setCurrentUserId(uid);
       const [taskRows, workoutRows, focusRows, setRows, achievementRows, unlockRows, settings, profile, connectionRows, challengeRows] = await Promise.all([
         supabase.from("tasks").select("id,title,notes,priority,due_at,completed_at,created_at").order("created_at", { ascending: false }).limit(250),
         supabase.from("workout_sessions").select("id,name,started_at,completed_at").order("started_at", { ascending: false }).limit(250),
@@ -302,7 +304,7 @@ export default function MoreModule() {
             <label className="module-label">Ends on<input className="module-input" type="date" min={localDay(new Date())} value={challengeEnd} onChange={(event) => setChallengeEnd(event.target.value)} required /></label>
             <button className="module-primary" disabled={busy || connections.every((row) => row.status !== "accepted")}>Send challenge invitation</button>
           </form>
-          <div className="community-challenge-list">{challenges.length === 0 ? <p className="module-empty">Your accepted challenges will appear here.</p> : challenges.map((row) => { const progress = ownChallengeProgress(row); const incoming = row.participant_id !== row.creator_id && row.status === "pending"; const percent = Math.min(100, Math.round(progress / Math.max(1,row.target) * 100)); return <div className="community-challenge" key={row.id}><div className="community-challenge-top"><div><strong>{row.title}</strong><small>{row.metric.replace("_"," ")} · target {row.target} · ends {new Date(row.ends_on + "T12:00:00").toLocaleDateString()}</small></div><span className="module-status">{row.status.toUpperCase()}</span></div>{row.status === "accepted" && <><div className="community-progress"><i style={{width:percent+"%"}}/></div><small className="community-progress-label">Your logged progress: {progress} / {row.target}</small></>}{incoming && <div className="community-actions"><button type="button" disabled={busy} onClick={() => void respondToChallenge(row.id,"accepted")}>Accept</button><button type="button" className="module-secondary" disabled={busy} onClick={() => void respondToChallenge(row.id,"declined")}>Decline</button></div>}</div>})}</div>
+          <div className="community-challenge-list">{challenges.length === 0 ? <p className="module-empty">Your accepted challenges will appear here.</p> : challenges.map((row) => { const progress = ownChallengeProgress(row); const incoming = row.participant_id === currentUserId && row.status === "pending"; const percent = Math.min(100, Math.round(progress / Math.max(1,row.target) * 100)); return <div className="community-challenge" key={row.id}><div className="community-challenge-top"><div><strong>{row.title}</strong><small>{row.metric.replace("_"," ")} · target {row.target} · ends {new Date(row.ends_on + "T12:00:00").toLocaleDateString()}</small></div><span className="module-status">{row.status.toUpperCase()}</span></div>{row.status === "pending" && !incoming && <small className="community-progress-label">Waiting for your friend to respond.</small>}{row.status === "accepted" && <><div className="community-progress"><i style={{width:percent+"%"}}/></div><small className="community-progress-label">Your logged progress: {progress} / {row.target}</small></>}{incoming && <div className="community-actions"><button type="button" disabled={busy} onClick={() => void respondToChallenge(row.id,"accepted")}>Accept</button><button type="button" className="module-secondary" disabled={busy} onClick={() => void respondToChallenge(row.id,"declined")}>Decline</button></div>}</div>})}</div>
         </article>
         <p className="module-footnote">No public profiles, open DMs, or global leaderboard. Friend codes are private invites, and activity data is never shared through this page.</p>
       </div>}

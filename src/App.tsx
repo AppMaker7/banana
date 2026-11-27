@@ -1,5 +1,4 @@
 import {useState} from "react";
-import "./banana-design.css";
 import HealthModule from "./HealthModule";
 import FocusModule from "./FocusModule";
 import AssistantModule from "./AssistantModule";

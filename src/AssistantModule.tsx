@@ -3,8 +3,11 @@ import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 
 type Task = { id: string; title: string; notes: string | null; priority: string; completed_at: string | null; created_at: string };
-type SavedPlan = { id: string; name: string; plan_data: { exercises?: { name: string; muscle: string; hint: string }[] } };
+type SavedPlan = { id: string; name: string; plan_data: { exercises?: { name: string; muscle: string; hint: string }[]; guidance?: string } };
 type Goal = "balanced" | "school" | "fitness" | "project";
+type TrainingSession = { id: string; name: string; started_at: string; completed_at: string | null };
+type TrainingSet = { exercise_name: string; muscle_group: string; reps: number; weight: number; created_at: string };
+type RecoveryLog = { logged_on: string; sleep_hours: number | null; energy_level: number | null; soreness_level: number | null };
 
 const taskTemplates: Record<Goal, string[]> = {
   balanced: ["Choose one important task for today", "Take a screen break and reset", "Prepare what you need for tomorrow"],
@@ -16,6 +19,10 @@ const taskTemplates: Record<Goal, string[]> = {
 export default function AssistantModule() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [plans, setPlans] = useState<SavedPlan[]>([]);
+  const [trainingSessions, setTrainingSessions] = useState<TrainingSession[]>([]);
+  const [trainingSets, setTrainingSets] = useState<TrainingSet[]>([]);
+  const [recoveryLogs, setRecoveryLogs] = useState<RecoveryLog[]>([]);
+  const [weeklyReport, setWeeklyReport] = useState("");
   const [goal, setGoal] = useState<Goal>("balanced");
   const [project, setProject] = useState("");
   const [question, setQuestion] = useState("");
@@ -27,14 +34,23 @@ export default function AssistantModule() {
 
   async function loadTasks() {
     if (!supabase) return;
-    const [{ data, error: loadError }, { data: planData, error: planError }] = await Promise.all([
+    const [{ data, error: loadError }, { data: planData, error: planError }, { data: sessionData, error: sessionError }, { data: setData, error: setErrorData }, { data: recoveryData, error: recoveryError }] = await Promise.all([
       supabase.from("tasks").select("id,title,notes,priority,completed_at,created_at").order("created_at", { ascending: false }).limit(40),
       supabase.from("workout_plans").select("id,name,plan_data").eq("is_archived", false).order("created_at", { ascending: false }).limit(6),
+      supabase.from("workout_sessions").select("id,name,started_at,completed_at").order("started_at", { ascending: false }).limit(100),
+      supabase.from("workout_sets").select("exercise_name,muscle_group,reps,weight,created_at").order("created_at", { ascending: false }).limit(300),
+      supabase.from("recovery_logs").select("logged_on,sleep_hours,energy_level,soreness_level").order("logged_on", { ascending: false }).limit(14),
     ]);
     if (loadError) setError(loadError.message);
     if (planError) setError(planError.message);
+    if (sessionError) setError(sessionError.message);
+    if (setErrorData) setError(setErrorData.message);
+    if (recoveryError) setError(recoveryError.message);
     setTasks((data ?? []) as Task[]);
     setPlans((planData ?? []) as SavedPlan[]);
+    setTrainingSessions((sessionData ?? []) as TrainingSession[]);
+    setTrainingSets((setData ?? []) as TrainingSet[]);
+    setRecoveryLogs((recoveryData ?? []) as RecoveryLog[]);
   }
 
   useEffect(() => { void loadTasks(); }, []);
@@ -116,6 +132,57 @@ export default function AssistantModule() {
     } finally { setBusy(false); }
   }
 
+  async function reviewSavedPlan(plan: SavedPlan) {
+    if (!supabase) return;
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const { data, error: aiError } = await supabase.functions.invoke("banana-ai", {
+        body: {
+          message: "Review this saved workout plan. Explain what muscle groups it covers, whether it looks reasonably balanced, what may be missing, and suggest at most two practical adjustments. Keep guidance age-appropriate, moderate, and recovery-aware. Do not infer body composition or recommend training through pain.",
+          context: { planName: plan.name, exercises: plan.plan_data?.exercises ?? [], guidance: plan.plan_data?.guidance ?? null, recentSessions: trainingSessions.slice(0, 8), personalSetRecords: trainingSets.slice(0, 20) },
+        },
+      });
+      if (aiError) throw aiError;
+      if (typeof data?.reply !== "string" || !data.reply.trim()) throw new Error(data?.error || "BANANA AI couldn't review that plan.");
+      setAnswer(data.reply.trim());
+      setMessage("Plan review is ready in BANANA Intelligence.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Couldn't review that plan.");
+    } finally { setBusy(false); }
+  }
+
+  async function createWeeklyReport() {
+    if (!supabase) return;
+    setBusy(true); setError(""); setMessage(""); setWeeklyReport("");
+    try {
+      const since = new Date(); since.setDate(since.getDate() - 6); since.setHours(0,0,0,0);
+      const sessions = trainingSessions.filter((row) => new Date(row.started_at) >= since);
+      const sets = trainingSets.filter((row) => new Date(row.created_at) >= since);
+      const focusRows = await supabase.from("focus_sessions").select("started_at,completed_minutes").gte("started_at", since.toISOString()).order("started_at", { ascending: false }).limit(100);
+      if (focusRows.error) throw focusRows.error;
+      const taskRows = tasks.filter((row) => new Date(row.created_at) >= since);
+      const { data, error: aiError } = await supabase.functions.invoke("banana-ai", {
+        body: {
+          message: "Create a short weekly BANANA progress report with: what was logged, one pattern supported by the records, one thing to celebrate, and one gentle next step. Do not judge missed days, infer health status, set body or appearance goals, or encourage excessive training. If records are sparse, say so plainly.",
+          context: {
+            period: { from: since.toISOString(), to: new Date().toISOString() },
+            workouts: sessions.map((row) => ({ name: row.name, completed: Boolean(row.completed_at), date: row.started_at })),
+            exerciseSets: sets,
+            focusSessions: focusRows.data ?? [],
+            tasks: taskRows.map((row) => ({ title: row.title, completed: Boolean(row.completed_at) })),
+            recentRecoveryCheckIns: recoveryLogs.slice(0, 7),
+          },
+        },
+      });
+      if (aiError) throw aiError;
+      if (typeof data?.reply !== "string" || !data.reply.trim()) throw new Error(data?.error || "BANANA AI didn't return a weekly report.");
+      setWeeklyReport(data.reply.trim());
+      setMessage("Your weekly report is ready.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Couldn't create your weekly report.");
+    } finally { setBusy(false); }
+  }
+
   async function addCustomTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase || !taskInput.trim()) return;
@@ -150,7 +217,7 @@ export default function AssistantModule() {
     setBusy(true); setError(""); setMessage("");
     try {
       const { data, error: aiError } = await supabase.functions.invoke("banana-ai", {
-        body: { message: question.trim(), context: { openTasks: tasks.filter((task) => !task.completed_at).map((task) => task.title).slice(0, 12), savedWorkoutPlans: plans.map((plan) => plan.name) } },
+        body: { message: question.trim(), context: { openTasks: tasks.filter((task) => !task.completed_at).map((task) => task.title).slice(0, 12), savedWorkoutPlans: plans.map((plan) => ({ name: plan.name, exercises: plan.plan_data?.exercises ?? [] })), recentWorkouts: trainingSessions.slice(0, 10), recentExerciseSets: trainingSets.slice(0, 30), recentRecoveryCheckIns: recoveryLogs.slice(0, 7) } },
       });
       if (aiError) throw aiError;
       if (typeof data?.reply !== "string" || !data.reply.trim()) {
@@ -194,7 +261,12 @@ export default function AssistantModule() {
       <article className="module-card">
         <div className="module-card-head"><div><p className="eyebrow">WORKOUT ROUTINE BUILDER</p><h3>Generate a balanced routine</h3><p>Creates a starter plan with comfortable sets and recovery guidance.</p></div><span>{plans.length} SAVED</span></div>
         <button className="module-primary" disabled={busy} onClick={() => void generateWorkoutPlan()}>{busy ? "Creating…" : "Create workout routine"}</button>
-        {plans.map((plan) => <div className="module-list-row" key={plan.id}><div><strong>{plan.name}</strong><small>{plan.plan_data?.exercises?.length ?? 0} exercises · Available in Health</small></div><span className="module-status">SAVED</span></div>)}
+        {plans.map((plan) => <div className="module-list-row" key={plan.id}><div><strong>{plan.name}</strong><small>{plan.plan_data?.exercises?.length ?? 0} exercises · Available in Health</small></div><button type="button" className="module-secondary" disabled={busy} onClick={() => void reviewSavedPlan(plan)}>Review plan</button></div>)}
+      </article>
+      <article className="module-card ai-weekly-report">
+        <div className="module-card-head"><div><p className="eyebrow">WEEKLY INTELLIGENCE</p><h3>Your progress report.</h3><p>AI summarizes your real saved workouts, focus sessions, tasks and recovery check-ins.</p></div><span>7 DAYS</span></div>
+        <button className="module-primary" disabled={busy} onClick={() => void createWeeklyReport()}>{busy ? "Reviewing your week…" : "Generate weekly report"}</button>
+        {weeklyReport && <div className="assistant-answer ai-report-answer" aria-live="polite">{weeklyReport}</div>}
       </article>
       <article className="module-card">
         <div className="module-card-head"><div><p className="eyebrow">YOUR TASKS & PROJECTS</p><h3>Task board</h3></div><span>{openCount} OPEN</span></div>

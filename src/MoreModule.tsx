@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 
-type Section = "Overview" | "Calendar" | "Journal" | "Discover" | "Achievements" | "Community";
+type Section = "Overview" | "Calendar" | "Journal" | "Discover" | "Achievements" | "Community" | "Statistics";
 type FriendConnection = { id: string; friend_id: string; display_name: string; status: "pending" | "accepted" | "rejected"; requested_by: string; created_at: string; incoming: boolean };
 type FriendChallenge = { id: string; creator_id: string; participant_id: string; title: string; metric: "workouts" | "focus_minutes" | "completed_tasks"; target: number; starts_on: string; ends_on: string; status: "pending" | "accepted" | "declined" | "completed"; created_at: string };
 type Task = { id: string; title: string; notes: string | null; priority: string; due_at: string | null; completed_at: string | null; created_at: string };
@@ -243,7 +243,7 @@ export default function MoreModule() {
   return <section className="banana-module more-module">
     <div className="module-heading"><div><p className="eyebrow">YOUR WORKSPACE</p><h2>Everything beyond the daily grind.</h2><p>Explore your stats, plan ahead, save notes and discover movements.</p></div><span className="module-pill">MORE</span></div>
     {(error || message) && <p className={error ? "module-alert error" : "module-alert"} role="status">{error || message}</p>}
-    <nav className="more-tabs" aria-label="Workspace sections">{(["Overview", "Calendar", "Journal", "Discover", "Achievements", "Community"] as Section[]).map((item) => <button type="button" key={item} className={section === item ? "active" : ""} aria-pressed={section === item} onClick={() => setSection(item)}>{item}</button>)}</nav>
+    <nav className="more-tabs" aria-label="Workspace sections">{(["Overview", "Statistics", "Calendar", "Journal", "Discover", "Achievements", "Community"] as Section[]).map((item) => <button type="button" key={item} className={section === item ? "active" : ""} aria-pressed={section === item} onClick={() => setSection(item)}>{item}</button>)}</nav>
     {loading ? <article className="module-card"><p className="module-empty">Loading your account data…</p></article> : <>
       {section === "Overview" && <>
         <div className="more-stat-grid">
@@ -256,6 +256,13 @@ export default function MoreModule() {
           {activity.length ? activity.map((item) => <div className="module-list-row" key={item.id}><div><strong>{item.title}</strong><small>{item.type} · {new Date(item.date).toLocaleString()}</small></div><span className="module-status">SAVED</span></div>) : <p className="module-empty">Your completed tasks, workouts and focus sessions will appear here.</p>}
         </article>
       </>}
+      {section === "Statistics" && <section className="module-card stats-workspace">
+        <div className="module-card-head"><div><p className="eyebrow">YOUR PERFORMANCE DATA</p><h3>Statistics & trends.</h3><p>Calculated from your completed sessions and saved records.</p></div><span>LAST 7 DAYS</span></div>
+        <div className="stats-week-grid">{Array.from({length:7},(_,index)=>{const day=new Date();day.setHours(0,0,0,0);day.setDate(day.getDate()-(6-index));const next=new Date(day);next.setDate(next.getDate()+1);const workoutCount=completedWorkouts.filter(row=>new Date(row.completed_at as string)>=day&&new Date(row.completed_at as string)<next).length;const taskCount=completedTasks.filter(row=>new Date(row.completed_at as string)>=day&&new Date(row.completed_at as string)<next).length;const focusCount=focus.filter(row=>new Date(row.started_at)>=day&&new Date(row.started_at)<next).reduce((sum,row)=>sum+Math.max(0,row.completed_minutes??0),0);const activityScore=workoutCount*2+taskCount+Math.ceil(focusCount/25);return <div className="stats-day" key={day.toISOString()}><div className="stats-bar-track"><i style={{height:Math.max(3,Math.min(100,activityScore*12))+"%"}}/></div><strong>{activityScore}</strong><small>{day.toLocaleDateString(undefined,{weekday:"short"})}</small></div>})}</div>
+        <div className="stats-summary-grid"><article><span>COMPLETED WORKOUTS</span><strong>{completedWorkouts.length}</strong><small>Loaded history</small></article><article><span>COMPLETED TASKS</span><strong>{completedTasks.length}</strong><small>Loaded history</small></article><article><span>FOCUS MINUTES</span><strong>{focusMinutes.toLocaleString()}</strong><small>Loaded history</small></article><article><span>SETS LOGGED</span><strong>{sets.length}</strong><small>Loaded history</small></article></div>
+        <div className="stats-records"><div className="module-card-head"><div><p className="eyebrow">PERSONAL RECORDS</p><h3>Best set by exercise.</h3></div><span>{new Set(sets.map(row=>row.exercise_name)).size} EXERCISES</span></div>{Object.entries(sets.reduce<Record<string,{reps:number;weight:number}>>((acc,row)=>{const current=acc[row.exercise_name]??{reps:0,weight:0};acc[row.exercise_name]={reps:Math.max(current.reps,Number(row.reps)||0),weight:Math.max(current.weight,Number(row.weight)||0)};return acc},{})).sort((a,b)=>b[1].reps-a[1].reps).slice(0,12).map(([name,record])=><div className="module-list-row" key={name}><div><strong>{name}</strong><small>{record.reps} reps · best logged weight {record.weight}</small></div><span className="module-status">PERSONAL BEST</span></div>)}{sets.length===0&&<p className="module-empty">Log a workout set to start building your personal-record history.</p>}</div>
+        <p className="module-footnote">Activity bars combine completed workouts, tasks and focus sessions into a simple consistency indicator. They are not a health score or a ranking against other people.</p>
+      </section>}
       {section === "Calendar" && <article className="module-card"><div className="module-card-head"><div><p className="eyebrow">YOUR SCHEDULE</p><h3>{dateLabel(selectedDate)}</h3><p>Tasks with due dates and workouts logged on this day.</p></div><span>CALENDAR</span></div>
         <label className="module-label">Choose a date<input className="module-input" type="date" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} /></label>
         <div className="more-calendar-list">

@@ -25,15 +25,29 @@ export default function HomeDashboard({onNavigate}:Props){
     supabase.from("tasks").select("id,title,priority,completed_at,created_at").is("completed_at",null).order("created_at",{ascending:false}).limit(4),
     supabase.from("workout_sessions").select("id,name,started_at,completed_at").gte("started_at",monthStart.toISOString()).order("started_at",{ascending:false}).limit(100),
     supabase.from("focus_sessions").select("id,started_at,completed_minutes,ended_at").gte("started_at",monthStart.toISOString()).order("started_at",{ascending:false}).limit(100),
-    supabase.from("workout_sets").select("reps").order("reps",{ascending:false}).limit(1),
+    supabase.from("workout_sets").select("reps,exercise_name,muscle_group").order("reps",{ascending:false}).limit(500),
     supabase.from("achievements").select("id,name,description,icon").order("category"),
-    supabase.from("user_achievements").select("achievement_id").eq("user_id",uid)
+    supabase.from("user_achievements").select("achievement_id").eq("user_id",uid),
+    supabase.from("recovery_logs").select("logged_on").order("logged_on",{ascending:false}).limit(60)
    ]);
-   for(const r of [profile,tasks,open,workouts,focus,sets,defs,unlocks])if(r.error)throw r.error;
+   for(const r of [profile,tasks,open,workouts,focus,sets,defs,unlocks,recovery])if(r.error)throw r.error;
    const taskRows=(tasks.data??[]) as Task[],openRows=(open.data??[]) as Task[],workoutRows=(workouts.data??[]) as Workout[],focusRows=(focus.data??[]) as FocusLog[];
-   const completedTasks=taskRows.filter(x=>Boolean(x.completed_at)),completedWorkouts=workoutRows.filter(x=>Boolean(x.completed_at)),focusMinutes=focusRows.reduce((n,x)=>n+Math.max(0,x.completed_minutes??0),0),best=Math.max(0,Number(sets.data?.[0]?.reps??0));
+   const completedTasks=taskRows.filter(x=>Boolean(x.completed_at)),completedWorkouts=workoutRows.filter(x=>Boolean(x.completed_at)),focusMinutes=focusRows.reduce((n,x)=>n+Math.max(0,x.completed_minutes??0),0),best=Math.max(0,...(sets.data??[]).map((x:{reps:number})=>Number(x.reps)||0));
    const week=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);const key=dayKey(d);const count=taskRows.filter(x=>dayKey(new Date(x.created_at))===key).length+workoutRows.filter(x=>dayKey(new Date(x.started_at))===key).length+focusRows.filter(x=>dayKey(new Date(x.started_at))===key).length;return{label:d.toLocaleDateString(undefined,{weekday:"short"}),count,today:key===dayKey(today)}});
-   const rules=[{id:"first_task",ok:completedTasks.length>=1},{id:"first_workout",ok:completedWorkouts.length>=1},{id:"five_workouts",ok:completedWorkouts.length>=5},{id:"first_focus",ok:focusRows.some(x=>(x.completed_minutes??0)>0)},{id:"focus_hour",ok:focusMinutes>=60},{id:"first_set",ok:best>0}];
+   const trackedExercises=new Set((sets.data??[]).map((x:{exercise_name:string})=>x.exercise_name)).size;
+   const trackedMuscles=new Set((sets.data??[]).map((x:{muscle_group:string})=>x.muscle_group)).size;
+   const activeDays=week.filter(x=>x.count>0).length;
+   const rules=[
+    {id:"first_task",ok:completedTasks.length>=1},{id:"first_workout",ok:completedWorkouts.length>=1},
+    {id:"five_workouts",ok:completedWorkouts.length>=5},{id:"first_focus",ok:focusRows.some(x=>(x.completed_minutes??0)>0)},
+    {id:"focus_hour",ok:focusMinutes>=60},{id:"first_set",ok:best>0},
+    {id:"ten_workouts",ok:completedWorkouts.length>=10},{id:"twenty_workouts",ok:completedWorkouts.length>=20},
+    {id:"ten_tasks",ok:completedTasks.length>=10},{id:"twentyfive_tasks",ok:completedTasks.length>=25},
+    {id:"five_focus_sessions",ok:focusRows.filter(x=>(x.completed_minutes??0)>0).length>=5},
+    {id:"five_focus_hours",ok:focusMinutes>=300},{id:"five_exercises",ok:trackedExercises>=5},
+    {id:"all_muscles",ok:trackedMuscles>=8},{id:"first_recovery",ok:(recovery.data??[]).length>=1},
+    {id:"three_active_days",ok:activeDays>=3}
+   ];
    const existing=new Set((unlocks.data??[]).map((x:{achievement_id:string})=>x.achievement_id)),newRows=rules.filter(x=>x.ok&&!existing.has(x.id)).map(x=>({user_id:uid,achievement_id:x.id}));
    if(newRows.length){const {error:e}=await supabase.from("user_achievements").upsert(newRows,{onConflict:"user_id,achievement_id",ignoreDuplicates:true});if(e)throw e}
    setName((profile.data?.display_name||auth.user.email?.split("@")[0]||"there").split(" ")[0]);setOpenTasks(openRows);setWeekData(week);setAchievements((defs.data??[]) as Achievement[]);setUnlocked(new Set([...existing,...newRows.map(x=>x.achievement_id)]));setBestReps(best);

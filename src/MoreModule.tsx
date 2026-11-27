@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 
-type Section = "Overview" | "Calendar" | "Journal" | "Discover" | "Achievements" | "Community" | "Statistics";
+type Section = "Overview" | "Calendar" | "Journal" | "Discover" | "Achievements" | "Community" | "Statistics" | "Notifications";
 type FriendConnection = { id: string; friend_id: string; display_name: string; status: "pending" | "accepted" | "rejected"; requested_by: string; created_at: string; incoming: boolean };
 type FriendChallenge = { id: string; creator_id: string; participant_id: string; title: string; metric: "workouts" | "focus_minutes" | "completed_tasks"; target: number; starts_on: string; ends_on: string; status: "pending" | "accepted" | "declined" | "completed"; created_at: string };
 type Task = { id: string; title: string; notes: string | null; priority: string; due_at: string | null; completed_at: string | null; created_at: string };
@@ -238,6 +238,10 @@ export default function MoreModule() {
     } finally { setBusy(false); }
   }
 
+  const incomingFriendRequests = connections.filter((row) => row.status === "pending" && row.incoming);
+  const incomingChallengeInvites = challenges.filter((row) => row.status === "pending" && row.participant_id === currentUserId);
+  const notificationCount = incomingFriendRequests.length + incomingChallengeInvites.length;
+
   const activity = [
     ...completedTasks.map((row) => ({ id: "task-" + row.id, title: row.title, type: "Task completed", date: row.completed_at as string })),
     ...completedWorkouts.map((row) => ({ id: "workout-" + row.id, title: row.name, type: "Workout completed", date: row.completed_at as string })),
@@ -247,7 +251,7 @@ export default function MoreModule() {
   return <section className="banana-module more-module">
     <div className="module-heading"><div><p className="eyebrow">YOUR WORKSPACE</p><h2>Everything beyond the daily grind.</h2><p>Explore your stats, plan ahead, save notes and discover movements.</p></div><span className="module-pill">MORE</span></div>
     {(error || message) && <p className={error ? "module-alert error" : "module-alert"} role="status">{error || message}</p>}
-    <nav className="more-tabs" aria-label="Workspace sections">{(["Overview", "Statistics", "Calendar", "Journal", "Discover", "Achievements", "Community"] as Section[]).map((item) => <button type="button" key={item} className={section === item ? "active" : ""} aria-pressed={section === item} onClick={() => setSection(item)}>{item}</button>)}</nav>
+    <nav className="more-tabs" aria-label="Workspace sections">{(["Overview", "Statistics", "Calendar", "Journal", "Discover", "Achievements", "Community", "Notifications"] as Section[]).map((item) => <button type="button" key={item} className={section === item ? "active" : ""} aria-pressed={section === item} onClick={() => setSection(item)}>{item}</button>)}</nav>
     {loading ? <article className="module-card"><p className="module-empty">Loading your account data…</p></article> : <>
       {section === "Overview" && <>
         <div className="more-stat-grid">
@@ -287,6 +291,18 @@ export default function MoreModule() {
         <label className="module-label">Filter by muscle group<select className="module-input" value={filter} onChange={(event) => setFilter(event.target.value)}><option>All</option>{Array.from(new Set(movements.map((row) => row.group))).map((group) => <option key={group}>{group}</option>)}</select></label>
         <div className="more-discover-grid">{filteredMovements.map((row) => <article className="more-movement" key={row.name}><span>{row.type.toUpperCase()} · {row.group.toUpperCase()}</span><strong>{row.name}</strong><p>{row.cue}</p></article>)}</div>
       </article>}
+      {section === "Notifications" && <div className="notifications-workspace">
+        <article className="module-card">
+          <div className="module-card-head"><div><p className="eyebrow">YOUR INBOX</p><h3>Notifications.</h3><p>Friend requests, challenge invitations and recent account milestones.</p></div><span>{notificationCount} PENDING</span></div>
+          {incomingFriendRequests.map((row) => <div className="module-list-row" key={"friend-"+row.id}><div><strong>{row.display_name} sent you a friend request.</strong><small>Friend connection · {new Date(row.created_at).toLocaleString()}</small></div><div className="community-actions"><button type="button" disabled={busy} onClick={() => void respondToFriend(row.id,"accepted")}>Accept</button><button type="button" className="module-secondary" disabled={busy} onClick={() => void respondToFriend(row.id,"rejected")}>Decline</button></div></div>)}
+          {incomingChallengeInvites.map((row) => <div className="module-list-row" key={"challenge-"+row.id}><div><strong>Challenge invitation: {row.title}</strong><small>{row.metric.replace("_"," ")} · target {row.target} · ends {new Date(row.ends_on+"T12:00:00").toLocaleDateString()}</small></div><div className="community-actions"><button type="button" disabled={busy} onClick={() => void respondToChallenge(row.id,"accepted")}>Accept</button><button type="button" className="module-secondary" disabled={busy} onClick={() => void respondToChallenge(row.id,"declined")}>Decline</button></div></div>)}
+          {notificationCount === 0 && <p className="module-empty">You're all caught up. New friend requests and challenge invitations will appear here.</p>}
+        </article>
+        <article className="module-card">
+          <div className="module-card-head"><div><p className="eyebrow">RECENT MILESTONES</p><h3>Latest account activity.</h3></div><span>{activity.length} EVENTS</span></div>
+          {activity.length ? activity.slice(0,8).map((item) => <div className="module-list-row" key={"activity-"+item.id}><div><strong>{item.title}</strong><small>{item.type} · {new Date(item.date).toLocaleString()}</small></div><span className="module-status">SAVED</span></div>) : <p className="module-empty">Your recent milestones will appear here.</p>}
+        </article>
+      </div>}
       {section === "Community" && <div className="community-workspace">
         <section className="community-hero">
           <div><span className="rank-overline">YOUR PRIVATE CIRCLE</span><h3>Train alongside people you know.</h3><p>Connect using friend codes. Requests must be accepted before you can invite each other to challenges. Your workout, focus and journal records stay private.</p></div>

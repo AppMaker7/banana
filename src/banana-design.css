@@ -166,3 +166,43 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .mobile-nav{display:none}
   .content{padding-top:38px}
 }
+
+/* Community and analytics screens */
+.community-workspace{display:grid;gap:14px}
+.community-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,240px);gap:20px;align-items:center;padding:22px;border:1px solid #5B491B;border-radius:16px;background:radial-gradient(circle at 80% 20%,#FFD84D20,transparent 32%),linear-gradient(120deg,#1C190F,#0D0D0B);box-shadow:0 18px 45px #0006}
+.community-hero h3{margin:9px 0;font:600 23px "Space Grotesk",sans-serif;color:#FFF8E5;letter-spacing:-.04em}
+.community-hero p{max-width:620px;color:#B0A98F;font-size:11px;line-height:1.7}
+.community-code{display:grid;gap:9px;padding:16px;border:1px solid #66551F;border-radius:12px;background:#090907;text-align:center}
+.community-code small{color:#B6A66E;font-size:8px;letter-spacing:.16em}
+.community-code strong{color:#FFE27A;font:700 24px "Space Grotesk",sans-serif;letter-spacing:.15em}
+.community-code button{width:100%}
+.community-add-form{display:grid;gap:12px}
+.community-connection-list,.community-challenge-list{display:grid;gap:9px;margin-top:12px}
+.community-connection{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #39311F;border-radius:10px;background:#11110D}
+.community-avatar{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:10px;background:#30270F;color:#FFE27A;font-weight:800}
+.community-connection>div:nth-child(2){display:grid;gap:4px;min-width:0;flex:1}
+.community-connection strong,.community-challenge strong{color:#FFF5D9;font-size:11px}
+.community-connection small,.community-challenge small{color:#A69D85;font-size:8px}
+.community-actions{display:flex;gap:6px;flex-wrap:wrap}
+.community-actions button{border:1px solid #6C571E;border-radius:7px;padding:7px 10px;background:#FFD84D16;color:#FFE27A;font-size:9px;font-weight:800}
+.community-challenge-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.community-challenge-form button{align-self:end;min-height:39px}
+.community-challenge{display:grid;gap:10px;padding:13px;border:1px solid #39311F;border-radius:11px;background:#11110D}
+.community-challenge-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.community-challenge-top>div{display:grid;gap:5px}
+.community-progress{height:8px;overflow:hidden;border-radius:99px;background:#322C1A}
+.community-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#C99E2D,#FFE98B)}
+.community-progress-label{color:#A69D85;font-size:8px}
+.stats-workspace{display:grid;gap:18px}
+.stats-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;align-items:end;min-height:165px;padding:15px;border:1px solid #39311F;border-radius:12px;background:#0B0B09}
+.stats-day{display:grid;justify-items:center;align-items:end;gap:7px;height:130px}
+.stats-bar-track{display:flex;align-items:flex-end;justify-content:center;width:100%;height:95px;overflow:hidden;border-radius:7px;background:#252116}
+.stats-bar-track i{display:block;width:100%;min-height:3px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#FFE98B,#A67B1E)}
+.stats-day strong{color:#EADBA7;font-size:9px}
+.stats-day small{color:#A69D85;font-size:8px}
+.stats-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.stats-summary-grid article{display:grid;gap:7px;padding:13px;border:1px solid #39311F;border-radius:10px;background:#11110D}
+.stats-summary-grid span,.stats-summary-grid small{color:#A69D85;font-size:8px}
+.stats-summary-grid strong{color:#FFF5D9;font:600 23px "Space Grotesk",sans-serif}
+.stats-records{display:grid;gap:8px}
+@media(max-width:720px){.community-hero{grid-template-columns:1fr}.community-challenge-form{grid-template-columns:1fr}.stats-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
   if (payload.message.length > 2000) return json({ error: "Keep messages under 2,000 characters." }, 413);
 
   const safeContext = payload.context && typeof payload.context === "object"
-    ? JSON.stringify(payload.context).slice(0, 1200)
+    ? JSON.stringify(payload.context).slice(0, 8000)
     : "";
 
   try {

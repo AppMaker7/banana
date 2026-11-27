@@ -206,3 +206,12 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .stats-summary-grid strong{color:#FFF5D9;font:600 23px "Space Grotesk",sans-serif}
 .stats-records{display:grid;gap:8px}
 @media(max-width:720px){.community-hero{grid-template-columns:1fr}.community-challenge-form{grid-template-columns:1fr}.stats-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.ai-weekly-report{background:radial-gradient(circle at 90% 0%,#FFD84D12,transparent 32%),linear-gradient(145deg,#171611,#10100E)!important}
+.ai-report-answer{margin-top:12px;border-color:#5B4A1F;background:#0D0C08;color:#F0E6C8}
+.assistant-answer{border-color:#41371D;background:#0D0C08;color:#F0E6C8}
+.assistant-preview-list>div{border-color:#39311F;background:#11110D;color:#D9D0B5}
+.assistant-preview-list>div>span{color:#FFE27A}
+.assistant-task{border-color:#39311F;background:#11110D}
+.assistant-task strong{color:#FFF5D9}
+.assistant-task small{color:#A69D85}

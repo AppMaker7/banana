@@ -19,7 +19,7 @@ export default function HomeDashboard({onNavigate}:Props){
   try{
    const {data:auth,error:authError}=await supabase.auth.getUser();if(authError)throw authError;if(!auth.user)throw new Error("Your session expired. Log in again.");
    const uid=auth.user.id,now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),weekStart=new Date(today),monthStart=new Date(today);weekStart.setDate(today.getDate()-6);monthStart.setDate(today.getDate()-29);
-   const [profile,tasks,open,workouts,focus,sets,defs,unlocks]=await Promise.all([
+   const [profile,tasks,open,workouts,focus,sets,defs,unlocks,recovery]=await Promise.all([
     supabase.from("profiles").select("display_name").eq("id",uid).maybeSingle(),
     supabase.from("tasks").select("id,title,priority,completed_at,created_at").gte("created_at",monthStart.toISOString()).order("created_at",{ascending:false}).limit(200),
     supabase.from("tasks").select("id,title,priority,completed_at,created_at").is("completed_at",null).order("created_at",{ascending:false}).limit(4),
